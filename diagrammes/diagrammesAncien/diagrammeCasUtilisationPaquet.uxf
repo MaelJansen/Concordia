@@ -1,9 +1,0 @@
-<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLPackage</id><coordinates><x>490</x><y>0</y><w>520</w><h>750</h></coordinates><panel_attributes>Game
---
-bg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLActor</id><coordinates><x>380</x><y>300</y><w>60</w><h>110</h></coordinates><panel_attributes>Players</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>610</x><y>450</y><w>300</w><h>130</h></coordinates><panel_attributes>
-
-
-GamePlay</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>610</x><y>90</y><w>300</w><h>130</h></coordinates><panel_attributes>
-
-
-Game Preparation</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>420</x><y>330</y><w>210</w><h>210</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;190;190</additional_attributes></element><element><id>Relation</id><coordinates><x>420</x><y>140</y><w>210</w><h>220</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;200;190;10</additional_attributes></element></diagram>
