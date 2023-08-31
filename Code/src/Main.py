@@ -1,4 +1,4 @@
-from PlayerController import PlayerController
+from Player import Player
 from Map import Map
 
 class GameController:
@@ -6,5 +6,9 @@ class GameController:
         self.player_controller = PlayerController()
         self.game_map = Map()
         self.player_list = ()
+        
     def initialization_script():
         pass
+
+class PlayerController:
+    pass

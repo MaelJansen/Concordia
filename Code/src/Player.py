@@ -1,7 +1,5 @@
-from Colonist import Colonist
-from StoreHouse import StoreHouse
-from MarketPlace import MarketPlace
-from Card import Card
+from Piece import Piece, Colonist
+from Card import Card, MarketPlace
 
 class Player:
     def __init__(self):
@@ -13,3 +11,7 @@ class Player:
         self.my_sea_colonists = ()
         self.discard_pile = ()
         self.my_deck = ()
+
+class StoreHouse:
+    def __init__(self):
+        my_pieces = ()
