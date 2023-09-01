@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from Piece import Ressource
+#from Piece import Ressource
 
 class Map:
     def __init__(self, min_player, map_player):
