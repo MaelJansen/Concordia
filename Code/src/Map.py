@@ -146,6 +146,7 @@ class Way:
 
     Methods
     -------
+    is_valid_move_for_colonist(self, colonist)
 
     """
     def __init__(self):
@@ -153,3 +154,42 @@ class Way:
         self.max_colonist = None
         self.n_colonist = None
         self.name = None
+        
+        
+   Certainly, let's implement a simple example of the is_valid_move_for_colonist method in the Way class. In this example, we'll consider that a move is valid if the way is not already occupied by another colonist and if the colonist's type matches the type of the way.
+
+Here's the updated Way class with the is_valid_move_for_colonist method:
+
+python
+
+class Way:
+    """
+    A class to represent a way or path in the game Concordia.
+
+    Attributes
+    ----------
+    name : str
+        The name of the way.
+    occupant : Colonist
+        The colonist currently occupying the way (if any).
+
+    Methods
+    -------
+    __init__(self, name)
+        Initializes a new instance of the Way class with the specified name.
+    is_valid_move_for_colonist(self, colonist)
+        Checks if the move is valid for the given colonist.
+
+    """
+    def __init__(self, name):
+        self.name = name
+        self.occupant = None
+
+    def is_valid_move_for_colonist(self, colonist):
+        if self.occupant is not None:
+            return False
+        
+        if colonist.type != self.name:
+            return False
+        
+        return True
