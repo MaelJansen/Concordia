@@ -1,11 +1,13 @@
-from ast import List, Tuple
+from ast import List, Set, Tuple
+from math import atan2, degrees
 import tkinter as tk
 from tkinter import ttk
 from PIL import ImageTk, Image
 from screeninfo import get_monitors
 from Player import Player
 from Map import Map
-import typing
+from typing import Type
+import oracledb
 
 class GameManager:
     """
@@ -38,7 +40,7 @@ class GameManager:
     def createInterface(self):
         root = tk.Tk()
         concordia_screen = Screen(root)
-        root.mainloop()  # Démarrer la boucle principale de l'interface graphique
+        root.mainloop() 
 
 class PlayerController:
     pass
@@ -50,11 +52,81 @@ class Screen:
         self.ai_number: int = 0
         self.ai_difficulty: str = ""
         self.game_map: str = ""
-        self.imperium_button: tk.Button 
-        self.italy_button: tk.Button 
-        self.createMenuUI()
+        
+        self.map_button: List[tk.Button]
+        self.capital: Tuple[str, int, int]
+        self.cities: List[Tuple[str, int, int]] = []
+        self.roads: Set[Tuple[Tuple[str, int, int], Tuple[str, int, int], str]] = []
+        
+        self.connection = oracledb.connect(
+            user="ETD",
+            password="ETD",
+            host="localhost",
+            port=1521,
+            sid="IUT12c"
+        )
+        self.cursor = self.connection.cursor()
 
-    def createMenuUI(self):
+        self.create_game()
+
+    def charge_map(self):
+        
+        sql_query_capital = f"""SELECT t.MAP_CAPITAL.CITY_NAME AS CAPITAL, t.MAP_CAPITAL.CITY_COORDINATES.X as x, t.MAP_CAPITAL.CITY_COORDINATES.Y as y
+                            FROM T_Concordia, TABLE(T_Concordia.concordia_map) t 
+                            WHERE t.map_name='{self.game_map}'"""
+        self.cursor.execute(sql_query_capital)
+        for row in self.cursor:
+            self.capital = [row[0], row[1], row[2]]
+            
+            
+        sql_query_cities = f"""SELECT c.CITY_NAME as city_name,
+                            c.CITY_COORDINATES.X as x,
+                            c.CITY_COORDINATES.Y as y
+                            FROM T_Concordia, TABLE(T_Concordia.concordia_map) t , TABLE(t.MAP_PROVINCE) p , TABLE(p.province_city) c
+                            WHERE t.map_name='{self.game_map}'"""
+        self.cursor.execute(sql_query_cities)
+        for city in self.cursor:
+            temp_city = [city[0], city[1], city[2]]
+            self.cities.append(temp_city)
+            
+        sql_query_lines = f"""SELECT l.line_city_1 city1, l.line_city_2 city2, l.line_way way
+                            FROM T_Concordia, TABLE(T_Concordia.concordia_map) t, TABLE(t.MAP_LINE) l
+                            WHERE t.map_name='{self.game_map}'"""
+        self.cursor.execute(sql_query_lines)
+        for line in self.cursor:
+            first_city:int = line[0]
+            second_city:int = line[1]
+            index:int = 0
+            indice_first_city:int = -1
+            indice_second_city:int = -1
+            first_city_capital:bool = False
+            second_city_capital:bool = False
+            for city in self.cities:
+                if(city[0] == first_city):
+                    indice_first_city = index
+                elif(city[0] == second_city):
+                    indice_second_city = index
+                elif(self.capital[0] == first_city):
+                    first_city_capital = True
+                elif(self.capital[0] == second_city):
+                    second_city_capital = True
+                index = index + 1
+            if(first_city_capital):
+                self.roads.append([self.capital, self.cities[indice_second_city], line[2]])
+            elif(second_city_capital):
+                self.roads.append([self.cities[indice_first_city], self.capital, line[2]])
+            else:
+                self.roads.append([self.cities[indice_first_city], self.cities[indice_second_city], line[2]])
+            
+        self.cursor.close()
+
+        
+        # self.temp_ = ("Rome", 500, 500)
+        # self.temp_villes = [("Venise", 100, 100), ("Paris", 50, 60), ("Madrid", 456, 689), ("Berlin", 870, 900), ("Tokyo", 321, 457), ("Sao-Paulo", 132, 873), ("Sao-Carlos", 103, 832), ("Biganos", 578, 213), ("Prague", 643, 43)]
+        # self.roads = [(self.temp_villes[5], self.temp_villes[6], "Land"), (self.temp_villes[5], self.temp_villes[6], "Water"), (self.temp_villes[5], self.temp_villes[6], "Air"), (self.temp_villes[5], self.temp_villes[2], "Land"), (self.temp_villes[2], self.temp_, "Water"), (self.temp_villes[2], self.temp_villes[6], "Air")]
+
+
+    def create_game(self):
         self.root.title("Concordia")
         dimensions: Tuple[int, int] = get_monitors()[0]
         self.root.geometry(f"{dimensions.width}x{dimensions.height}")
@@ -77,7 +149,7 @@ class Screen:
         # Placement des boutons
         self.imperium_button = tk.Button(self.root, text="Imperium", command=lambda: self.player_configuration("Imperium", 5), font=("Helvetica", 24))
         self.imperium_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 - 60, width=300, height=120)
-        self.italy_button = tk.Button(self.root, text="Italy", command=lambda: self.player_configuration("Italie", 4), font=("Helvetica", 24))
+        self.italy_button = tk.Button(self.root, text="Italia", command=lambda: self.player_configuration("Italia", 4), font=("Helvetica", 24))
         self.italy_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 + 100, width=300, height=120)
 
 
@@ -209,15 +281,111 @@ class Screen:
 
     def game_screen(self, ai_difficulty: str, windows: tk.Toplevel):
         windows.destroy()
-        if(self.ai_number != 0):
+        if self.ai_number != 0:
             self.ai_difficulty = ai_difficulty
 
         self.root.title("Concordia")
         dimensions: Tuple[int, int] = get_monitors()[0]
         self.root.geometry(f"{dimensions.width}x{dimensions.height}")
 
-        temp_label: tk.Label = tk.Label(self.root, text="Cette écran n'est pour la moment pas programmé " + self.game_map + ", il y a " + str(self.player_number) + " joueurs et " + str(self.ai_number) + " IA.")
-        temp_label.pack()
-        
+        canvas:tk.Canvas = tk.Canvas(self.root, width=dimensions.width, height=dimensions.height)
+        canvas.pack()
+
+        border_width:int = 20
+        canvas.create_rectangle(0, 0, self.root.winfo_screenwidth(), self.root.winfo_screenheight(), outline="black", width=border_width)
+        canvas.create_rectangle(border_width, border_width, self.root.winfo_screenwidth() - border_width, self.root.winfo_screenheight() - border_width, fill="white")
+        canvas.create_line(border_width, dimensions.height*0.25, dimensions.width - border_width, dimensions.height*0.25, fill="black", width=3) 
+        canvas.create_line(dimensions.width * 0.33, border_width, dimensions.width * 0.33, dimensions.height*0.25, fill="black", width=3) 
+
+        self.charge_map()
+
+        max_x:int = 0
+        max_y:int = 0
+
+        for city in self.cities:
+            nom, x, y = city
+            max_x = max(max_x, x)  
+            max_y = max(max_y, y) 
+
+        coeff_difference_x:float = (dimensions.width - border_width * 4) / max_x
+        coeff_difference_y:float = (dimensions.height * 0.75 - border_width * 4) / max_y
+
+        canvas.create_oval((self.capital[1] * coeff_difference_x) + border_width - 10, (self.capital[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) - 10, (self.capital[1] * coeff_difference_x) + border_width + 10, (self.capital[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="red")
+        canvas.create_text((self.capital[1] * coeff_difference_x) + border_width, (self.capital[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 15, text=self.capital[0], font=("Helvetica", 8))
+
+        for city in self.cities:
+            canvas.create_oval((city[1] * coeff_difference_x) + border_width - 10, (city[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) - 10, (city[1] * coeff_difference_x) + border_width + 10, (city[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="black")
+            canvas.create_text((city[1] * coeff_difference_x) + border_width, (city[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 15, text=city[0], font=("Helvetica", 8))
+
+        way_list = []
+        for way in self.roads:
+            first_coordinate, second_coordinate, transport_mode = way
+
+            if(transport_mode == "land"):
+                color:str = "lightgreen"
+            elif(transport_mode == "sea"):
+                color:str = "blue"
+            else:
+                color:str = "gray"
+
+            similar_road_number:int = 0
+            for past_way in way_list:
+                past_first_coordinate, past_second_coordinate, past_transport_mode = past_way
+                if(first_coordinate == past_first_coordinate and second_coordinate == past_second_coordinate):
+                    similar_road_number = similar_road_number + 1
+
+            if similar_road_number == 0:
+                canvas.create_line(
+                    (first_coordinate[1] * coeff_difference_x) + border_width,
+                    (first_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    (second_coordinate[1] * coeff_difference_x) + border_width,
+                    (second_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    fill=color,
+                    width=2
+                )
+                way_list.append(way)
+            elif similar_road_number == 1:
+                middle_x = (first_coordinate[1] + second_coordinate[1]) / 2
+                middle_y = (first_coordinate[2] + second_coordinate[2]) / 2 + 30
+
+                canvas.create_line(
+                    (first_coordinate[1] * coeff_difference_x) + border_width,
+                    (first_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    (middle_x * coeff_difference_x) + border_width,
+                    (middle_y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    fill=color,
+                    width=2
+                )
+                canvas.create_line(
+                    (middle_x * coeff_difference_x) + border_width,
+                    (middle_y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    (second_coordinate[1] * coeff_difference_x) + border_width,
+                    (second_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    fill=color,
+                    width=2
+                )
+                way_list.append(way)
+            elif similar_road_number == 2:
+                middle_x = (first_coordinate[1] + second_coordinate[1]) / 2
+                middle_y = (first_coordinate[2] + second_coordinate[2]) / 2 - 30
+
+                canvas.create_line(
+                    (first_coordinate[1] * coeff_difference_x) + border_width,
+                    (first_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    (middle_x * coeff_difference_x) + border_width,
+                    (middle_y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    fill=color,
+                    width=2
+                )
+                canvas.create_line(
+                    (middle_x * coeff_difference_x) + border_width,
+                    (middle_y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    (second_coordinate[1] * coeff_difference_x) + border_width,
+                    (second_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    fill=color,
+                    width=2
+                )
+                way_list.append(way)
+
 if __name__ == "__main__":
-    game_controller = GameController()
+    game_controller = GameManager()
