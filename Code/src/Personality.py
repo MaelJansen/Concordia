@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
-from Piece import Ressource, Colonist
+from Piece import Ressource
 from Player import Player
-from Card import Card
 
 class Personality(ABC):
     def __init__(self):
@@ -15,6 +14,20 @@ class Personality(ABC):
 
 
 class Architect(Personality):
+    """
+    A class to represent the architect card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the architect's actions
+
+    """
     def __init__(self):
         super().__init__()
         self.card_action = ""
@@ -27,8 +40,21 @@ class Architect(Personality):
         player.build_houses()
         pass
 
-
 class ColonialManager(Personality):
+    """
+    A class to represent the colonist card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the colonist's actions
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -43,6 +69,20 @@ class ColonialManager(Personality):
 
 
 class Concordia(Personality):
+    """
+    A class to represent Concordia card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch concordia's action
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -51,6 +91,20 @@ class Concordia(Personality):
 
 
 class Consul(Personality):
+    """
+    A class to represent the consul card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the consul's actions
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -60,6 +114,20 @@ class Consul(Personality):
 
 
 class Diplomat(Personality):
+    """
+    A class to represent the diplomat card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the diplomat's actions
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -73,6 +141,21 @@ class Diplomat(Personality):
 
 
 class Mercator(Personality):
+    """
+    A class to represent the Mercator card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the mercator's action's
+
+    """
+
     was_buy = False
 
     def __init__(self):
@@ -93,6 +176,20 @@ class Mercator(Personality):
 
 
 class Prefect(Personality):
+    """
+    A class to represent the prefect card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the prefect's actions
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -106,6 +203,20 @@ class Prefect(Personality):
 
 
 class PrefectusMagnus(Personality):
+    """
+    A class to represent the prefect magnus card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the prefect magnus's actions
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -114,6 +225,20 @@ class PrefectusMagnus(Personality):
 
 
 class Senator(Personality):
+    """
+    A class to represent the senator card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the senator's actions
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -123,6 +248,20 @@ class Senator(Personality):
 
 
 class Specialist(Personality):
+    """
+    A class to represent the specialist card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the specialist's actions
+
+    """
     def __init__(self, type_spec: Ressource):
         super().__init__()
         self.name = None
@@ -134,6 +273,20 @@ class Specialist(Personality):
 
 
 class Tribune(Personality):
+    """
+    A class to represent the tribune card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the tribune's actions
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -146,11 +299,3 @@ class Tribune(Personality):
         if money_earned > 0:
             player.gain_money(money_earned)
         player.add_colon()
-
-
-class Concordia(Personality):
-    def ___init___(self):
-        super().__init__()
-
-    def personality_action(self, player: Player):
-        pass
