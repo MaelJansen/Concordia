@@ -7,71 +7,67 @@ class Personality(ABC):
         self.card_action = None
         self.card_example = None
 
-    def personality_action():
+    @abstractmethod
+    def personality_action(self):
         pass
 
 class Architect(Personality):
     def __init__(self):
         super().__init__()
 
-    @abstractmethod
-    def personality_action():
+
+    def personality_action(self):
         pass
 
 class Colonist_(Personality):
     def __init__(self):
         super().__init__()
 
-    @abstractmethod
-    def personality_action():
+    def personality_action(self):
         pass
 
 class Concordia(Personality):
     def __init__(self):
         super().__init__()
 
-    @abstractmethod
-    def personality_action():
+    def personality_action(self):
         pass
 
 class Consul(Personality):
     def __init__(self):
         super().__init__()
 
-    @abstractmethod
-    def personality_action():
+
+    def personality_action(self):
         pass
 
 class Diplomat(Personality):
     def __init__(self):
         super().__init__()
 
-    @abstractmethod
-    def personality_action():
+
+    def personality_action(self):
         pass
 
 class Mercator(Personality):
     def __init__(self):
         super().__init__()
 
-    @abstractmethod
-    def personality_action():
+    def personality_action(self):
         pass
 
 class Prefect(Personality):
     def __init__(self):
         super().__init__()
 
-    @abstractmethod
-    def personality_action():
+    def personality_action(self):
         pass
 
 class PrefectusMagnus(Personality):
     def __init__(self):
         super().__init__()
 
-    @abstractmethod
-    def personality_action():
+    def personality_action(self):
         pass
 
 
@@ -79,8 +75,7 @@ class Senator(Personality):
     def __init__(self):
         super().__init__()
 
-    @abstractmethod
-    def personality_action():
+    def personality_action(self):
         pass
 
 class Specialist(Personality):
@@ -88,22 +83,19 @@ class Specialist(Personality):
         super().__init__()
         self.name = None
 
-    @abstractmethod
-    def personality_action():
+    def personality_action(self):
         pass
 
 class Tribune(Personality):
     def __init__(self):
         super().__init__()
 
-    @abstractmethod
-    def personality_action():
+    def personality_action(self):
         pass
 
 class Concordia(Personality):
     def ___init___(self):
         super().__init__()
 
-    @abstractmethod
-    def personality_action():
+    def personality_action(self):
         pass
