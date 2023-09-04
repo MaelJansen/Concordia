@@ -34,7 +34,7 @@ class Screen:
         self.ai_number: int = 0
         self.ai_difficulty: str = ""
         self.game_map: str = ""
-        
+        self.maps: list[str] = []
         self.map_button: List[tk.Button]
         self.capital: Tuple[str, int, int]
         self.cities: List[Tuple[str, int, int]] = []
@@ -50,6 +50,8 @@ class Screen:
         self.cursor = self.connection.cursor()
 
         self.create_game()
+        
+        self.cursor.close()
 
     def charge_map(self):
         
@@ -100,7 +102,7 @@ class Screen:
             else:
                 self.roads.append([self.cities[indice_first_city], self.cities[indice_second_city], line[2]])
             
-        self.cursor.close()
+        
 
         
         # self.temp_ = ("Rome", 500, 500)
@@ -129,6 +131,15 @@ class Screen:
         label.place(x=0, y=0, relwidth=1, relheight=1)
 
         # Placement des boutons
+        # sql_query_map = f"""SELECT t.map_name FROM T_Concordia, TABLE(T_Concordia.concordia_map) t"""
+        # self.cursor.execute(sql_query_map)
+        # for map in self.cursor:
+        #     self.maps.append(map)
+        #     temp_button = tk.Button(self.root, text=map[0], command=lambda: self.player_configuration(map[0], 5), font=("Helvetica", 24))
+        #     temp_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 - 60 + temp_height, width=300, height=120)
+        #     temp_height+=40
+            
+            
         self.imperium_button = tk.Button(self.root, text="Imperium", command=lambda: self.player_configuration("Imperium", 5), font=("Helvetica", 24))
         self.imperium_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 - 60, width=300, height=120)
         self.italy_button = tk.Button(self.root, text="Italia", command=lambda: self.player_configuration("Italia", 4), font=("Helvetica", 24))
