@@ -1,11 +1,11 @@
-from ast import List, Tuple
+from ast import List, Set, Tuple
 import tkinter as tk
 from tkinter import ttk
 from PIL import ImageTk, Image
 from screeninfo import get_monitors
 from Player import Player
 from Map import Map
-import typing
+from typing import Type
 
 class GameManager:
     def __init__(self):
@@ -20,7 +20,7 @@ class GameManager:
     def createInterface(self):
         root = tk.Tk()
         concordia_screen = Screen(root)
-        root.mainloop()  # Démarrer la boucle principale de l'interface graphique
+        root.mainloop() 
 
 class PlayerController:
     pass
@@ -34,9 +34,19 @@ class Screen:
         self.game_map: str = ""
         self.imperium_button: tk.Button 
         self.italy_button: tk.Button 
-        self.createMenuUI()
+        self.temp_capitale: Tuple[str, int, int]
+        self.temp_villes: List[Tuple[str, int, int]]
+        self.temp_routes: Set[Tuple[Tuple[str, int, int], Tuple[str, int, int], str]]
 
-    def createMenuUI(self):
+        self.create_game()
+
+    def temp_game(self):
+        self.temp_capitale = ("Rome", 500, 500)
+        self.temp_villes = [("Venise", 100, 100), ("Paris", 50, 60), ("Madrid", 456, 689), ("Berlin", 870, 900), ("Tokyo", 321, 457), ("Sao-Paulo", 132, 873), ("Sao-Carlos", 103, 832), ("Biganos", 578, 213), ("Prague", 643, 43)]
+        self.temp_routes = [(self.temp_villes[5], self.temp_villes[6], "Land"), (self.temp_villes[5], self.temp_villes[6], "Water"), (self.temp_villes[5], self.temp_villes[6], "Air"), (self.temp_villes[5], self.temp_villes[2], "Land"), (self.temp_villes[2], self.temp_capitale, "Water"), (self.temp_villes[2], self.temp_villes[6], "Air")]
+
+
+    def create_game(self):
         self.root.title("Concordia")
         dimensions: Tuple[int, int] = get_monitors()[0]
         self.root.geometry(f"{dimensions.width}x{dimensions.height}")
@@ -191,15 +201,53 @@ class Screen:
 
     def game_screen(self, ai_difficulty: str, windows: tk.Toplevel):
         windows.destroy()
-        if(self.ai_number != 0):
+        if self.ai_number != 0:
             self.ai_difficulty = ai_difficulty
 
         self.root.title("Concordia")
         dimensions: Tuple[int, int] = get_monitors()[0]
         self.root.geometry(f"{dimensions.width}x{dimensions.height}")
 
-        temp_label: tk.Label = tk.Label(self.root, text="Cette écran n'est pour la moment pas programmé " + self.game_map + ", il y a " + str(self.player_number) + " joueurs et " + str(self.ai_number) + " IA.")
-        temp_label.pack()
+        canvas:tk.Canvas = tk.Canvas(self.root, width=dimensions.width, height=dimensions.height)
+        canvas.pack()
+
+        border_width:int = 20
+        canvas.create_rectangle(0, 0, self.root.winfo_screenwidth(), self.root.winfo_screenheight(), outline="black", width=border_width)
+        canvas.create_rectangle(border_width, border_width, self.root.winfo_screenwidth() - border_width, self.root.winfo_screenheight() - border_width, fill="white")
+        canvas.create_line(border_width, dimensions.height*0.25, dimensions.width - border_width, dimensions.height*0.25, fill="black", width=3) 
+        canvas.create_line(dimensions.width * 0.33, border_width, dimensions.width * 0.33, dimensions.height*0.25, fill="black", width=3) 
+
+        self.temp_game()
+
+        max_x:int = 0
+        max_y:int = 0
+
+        for ville in self.temp_villes:
+            nom, x, y = ville
+            max_x = max(max_x, x)  
+            max_y = max(max_y, y) 
+
+        coeff_difference_x:float = (dimensions.width - border_width * 4) / max_x
+        coeff_difference_y:float = (dimensions.height * 0.75 - border_width * 4) / max_y
+
+        canvas.create_oval((self.temp_capitale[1] * coeff_difference_x) + border_width - 10, (self.temp_capitale[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) - 10, (self.temp_capitale[1] * coeff_difference_x) + border_width + 10, (self.temp_capitale[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="red")
+        canvas.create_text((self.temp_capitale[1] * coeff_difference_x) + border_width, (self.temp_capitale[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 15, text=self.temp_capitale[0], font=("Helvetica", 8))
+
+        for cities in self.temp_villes:
+            canvas.create_oval((cities[1] * coeff_difference_x) + border_width - 10, (cities[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) - 10, (cities[1] * coeff_difference_x) + border_width + 10, (cities[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="black")
+            canvas.create_text((cities[1] * coeff_difference_x) + border_width, (cities[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 15, text=cities[0], font=("Helvetica", 8))
+
+        for way in self.temp_routes:
+            x_coordinate, y_coordinate, transport_mode = way
+
+            if(transport_mode == "Land"):
+                color:str = "lightgreen"
+            elif(transport_mode == "Water"):
+                color:str = "blue"
+            else:
+                color:str = "gray"
+
+            canvas.create_line((x_coordinate[1] * coeff_difference_x) + border_width, (y_coordinate[1] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3), (x_coordinate[2] * coeff_difference_x) + border_width, (y_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3), fill=color, width=2)
         
 if __name__ == "__main__":
-    game_controller = GameController()
+    game_controller = GameManager()
