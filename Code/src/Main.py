@@ -150,7 +150,7 @@ class Screen:
 
     def ai_difficulty_configuration(self, ai_number: str, windows: tk.Toplevel):
         self.ai_number = int(ai_number)
-        if(self.ai_number != "0"):
+        if(self.ai_number != 0):
             windows.destroy()
             self.imperium_button.configure(state="disabled")
             self.italy_button.configure(state="disabled")
