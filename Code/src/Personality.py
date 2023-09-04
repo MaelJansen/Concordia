@@ -45,6 +45,12 @@ class Architect(Personality):
         
 
 class Colonist_(Personality):
+    """
+    Class Colonist_ 
+
+    Args:
+        Personality (_type_): _description_
+    """
     
     def __init__(self):
         super().__init__()
@@ -53,6 +59,18 @@ class Colonist_(Personality):
     
     @abstractmethod
     def personality_action(player: Player, root: tk.Tk, map: Map):
+        """"
+        Play the personality action of the player
+        
+        Args:
+            player (Player): The player who is playing
+            root (tk.Tk): The main window
+            map (Map): The map of the game
+            
+        Returns:
+            None
+            
+        """
         windows = tk.Toplevel(root)
         windows.title("Configuration de l'action")
         windows.resizable(False, False)
