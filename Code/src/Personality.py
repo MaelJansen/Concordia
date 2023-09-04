@@ -50,18 +50,18 @@ class Colonist_(Personality):
 
         windows.geometry(f"{windows_width}x{windows_height}+{x_coordinate}+{y_coordinate}")
 
-        action_label = tk.Label(windows, text="Choisissez une action:")
+        action_label = tk.Label(windows, text="Choose an action:")
         action_label.pack()
 
         def place_colons():
-            action_result_label.config(text="Vous avez choisi de placer des colons.")
+            action_result_label.config(text="You have chosen to place colonists.")
             
             colon_count = player.my_colonists.count
             wheat_needed = colon_count 
             tool_needed = colon_count  
             
             if player.my_store_house.my_ressources[0].count < wheat_needed or player.my_store_house.my_ressources[1].count < tool_needed:
-                action_result_label.config(text="Vous n'avez pas assez de ressources pour placer des colons.")
+                action_result_label.config(text="You don't have enough ressources.")
                 return
             
             player.my_store_house.my_ressources[0].count -= wheat_needed
@@ -69,7 +69,7 @@ class Colonist_(Personality):
             player.my_colonists.count += colon_count
 
             city_tile_window = tk.Toplevel(root)
-            city_tile_window.title("Choix de la tuile")
+            city_tile_window.title("Choose a city to place your colonists.")
             city_tile_window.resizable(False, False)
             
             city_tile_window_width = 300
@@ -82,7 +82,7 @@ class Colonist_(Personality):
             
             city_tile_window.geometry(f"{city_tile_window_width}x{city_tile_window_height}+{x_coordinate}+{y_coordinate}")
             
-            city_tile_label = tk.Label(city_tile_window, text="Choisissez une ville:")
+            city_tile_label = tk.Label(city_tile_window, text="Choose a city tile:")
             city_tile_label.pack()
             
             city_tile_box = ttk.Combobox(city_tile_window, values=map.city_tiles)
@@ -91,7 +91,6 @@ class Colonist_(Personality):
             new_colon: Colonist = Colonist()
             new_colon.move(map.city_tiles[city_tile_box.current()])
             
-
         def collect_sesterces():
             action_result_label.config(text="Vous avez choisi de récupérer des sesterces.")
             
