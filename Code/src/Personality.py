@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from Piece import Ressource
 
+
 class Personality(ABC):"""
     A class to represent the personality of cards and their actions
 

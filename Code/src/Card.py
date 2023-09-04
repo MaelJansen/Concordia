@@ -1,4 +1,4 @@
-from Personality import Personality
+from Personality import Personality, Specialist
 from Player import Player
 from Map import Map
 from typing import int, str
@@ -29,7 +29,6 @@ class Card:
         self.my_personality: Personality = None
         self.sale_cost: int = None
         self.sale_cost_diplomat: int = None
-
 
 class God:
     """
@@ -121,7 +120,12 @@ class God:
                 player.n_point += vp
 
             case "Minerva":
-                player.n_point += 0
+                for house in player.my_houses:
+                    for card in player.hand:
+                        if card.my_personality.__class__ == Specialist and \
+                            card.my_personality.used_resource == \
+                                house.houses.assigned_city_token.assigned_ressource:
+                            player.n_point += card.my_diety.victory_points
 
             case _:
                 pass
