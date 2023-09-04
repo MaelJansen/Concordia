@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from Piece import Ressource
 from Player import Player
 
+
 class Personality(ABC):
     def __init__(self):
         self.name = self.__class__.__name__.replace('_', '')
@@ -28,6 +29,7 @@ class Architect(Personality):
         function to launch the architect's actions
 
     """
+
     def __init__(self):
         super().__init__()
         self.card_action = ""
@@ -39,6 +41,7 @@ class Architect(Personality):
         # Function who build a house in a city
         player.build_houses()
         pass
+
 
 class ColonialManager(Personality):
     """
@@ -55,6 +58,7 @@ class ColonialManager(Personality):
         function to launch the colonist's actions
 
     """
+
     def __init__(self):
         super().__init__()
 
@@ -83,6 +87,7 @@ class Concordia(Personality):
         function to launch concordia's action
 
     """
+
     def __init__(self):
         super().__init__()
 
@@ -105,6 +110,7 @@ class Consul(Personality):
         function to launch the consul's actions
 
     """
+
     def __init__(self):
         super().__init__()
 
@@ -128,6 +134,7 @@ class Diplomat(Personality):
         function to launch the diplomat's actions
 
     """
+
     def __init__(self):
         super().__init__()
 
@@ -190,6 +197,7 @@ class Prefect(Personality):
         function to launch the prefect's actions
 
     """
+
     def __init__(self):
         super().__init__()
 
@@ -217,6 +225,7 @@ class PrefectusMagnus(Personality):
         function to launch the prefect magnus's actions
 
     """
+
     def __init__(self):
         super().__init__()
 
@@ -239,6 +248,7 @@ class Senator(Personality):
         function to launch the senator's actions
 
     """
+
     def __init__(self):
         super().__init__()
 
@@ -262,6 +272,7 @@ class Specialist(Personality):
         function to launch the specialist's actions
 
     """
+
     def __init__(self, type_spec: Ressource):
         super().__init__()
         self.name = None
@@ -287,6 +298,7 @@ class Tribune(Personality):
         function to launch the tribune's actions
 
     """
+
     def __init__(self):
         super().__init__()
 
