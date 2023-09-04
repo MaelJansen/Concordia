@@ -1,4 +1,5 @@
 from ast import List, Set, Tuple
+from math import atan2, degrees
 import tkinter as tk
 from tkinter import ttk
 from PIL import ImageTk, Image
@@ -80,14 +81,24 @@ class Screen:
             index:int = 0
             indice_first_city:int = -1
             indice_second_city:int = -1
+            first_city_capital:bool = False
+            second_city_capital:bool = False
             for city in self.cities:
                 if(city[0] == first_city):
                     indice_first_city = index
                 elif(city[0] == second_city):
                     indice_second_city = index
+                elif(self.capital[0] == first_city):
+                    first_city_capital = True
+                elif(self.capital[0] == second_city):
+                    second_city_capital = True
                 index = index + 1
-            self.roads.append([self.cities[indice_first_city], self.cities[indice_second_city], line[2]])
-            print([self.cities[indice_first_city], self.cities[indice_second_city], line[2]])
+            if(first_city_capital):
+                self.roads.append([self.capital, self.cities[indice_second_city], line[2]])
+            elif(second_city_capital):
+                self.roads.append([self.cities[indice_first_city], self.capital, line[2]])
+            else:
+                self.roads.append([self.cities[indice_first_city], self.cities[indice_second_city], line[2]])
             
         self.cursor.close()
 
@@ -120,7 +131,7 @@ class Screen:
         # Placement des boutons
         self.imperium_button = tk.Button(self.root, text="Imperium", command=lambda: self.player_configuration("Imperium", 5), font=("Helvetica", 24))
         self.imperium_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 - 60, width=300, height=120)
-        self.italy_button = tk.Button(self.root, text="Italy", command=lambda: self.player_configuration("Italie", 4), font=("Helvetica", 24))
+        self.italy_button = tk.Button(self.root, text="Italia", command=lambda: self.player_configuration("Italia", 4), font=("Helvetica", 24))
         self.italy_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 + 100, width=300, height=120)
 
 
@@ -288,8 +299,9 @@ class Screen:
             canvas.create_oval((city[1] * coeff_difference_x) + border_width - 10, (city[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) - 10, (city[1] * coeff_difference_x) + border_width + 10, (city[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="black")
             canvas.create_text((city[1] * coeff_difference_x) + border_width, (city[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 15, text=city[0], font=("Helvetica", 8))
 
+        way_list = []
         for way in self.roads:
-            x_coordinate, y_coordinate, transport_mode = way
+            first_coordinate, second_coordinate, transport_mode = way
 
             if(transport_mode == "land"):
                 color:str = "lightgreen"
@@ -298,7 +310,64 @@ class Screen:
             else:
                 color:str = "gray"
 
-            canvas.create_line((x_coordinate[1] * coeff_difference_x) + border_width, (y_coordinate[1] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3), (x_coordinate[2] * coeff_difference_x) + border_width, (y_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3), fill=color, width=2)
-        
+            similar_road_number:int = 0
+            for past_way in way_list:
+                past_first_coordinate, past_second_coordinate, past_transport_mode = past_way
+                if(first_coordinate == past_first_coordinate and second_coordinate == past_second_coordinate):
+                    similar_road_number = similar_road_number + 1
+
+            if similar_road_number == 0:
+                canvas.create_line(
+                    (first_coordinate[1] * coeff_difference_x) + border_width,
+                    (first_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    (second_coordinate[1] * coeff_difference_x) + border_width,
+                    (second_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    fill=color,
+                    width=2
+                )
+                way_list.append(way)
+            elif similar_road_number == 1:
+                middle_x = (first_coordinate[1] + second_coordinate[1]) / 2
+                middle_y = (first_coordinate[2] + second_coordinate[2]) / 2 + 30
+
+                canvas.create_line(
+                    (first_coordinate[1] * coeff_difference_x) + border_width,
+                    (first_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    (middle_x * coeff_difference_x) + border_width,
+                    (middle_y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    fill=color,
+                    width=2
+                )
+                canvas.create_line(
+                    (middle_x * coeff_difference_x) + border_width,
+                    (middle_y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    (second_coordinate[1] * coeff_difference_x) + border_width,
+                    (second_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    fill=color,
+                    width=2
+                )
+                way_list.append(way)
+            elif similar_road_number == 2:
+                middle_x = (first_coordinate[1] + second_coordinate[1]) / 2
+                middle_y = (first_coordinate[2] + second_coordinate[2]) / 2 - 30
+
+                canvas.create_line(
+                    (first_coordinate[1] * coeff_difference_x) + border_width,
+                    (first_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    (middle_x * coeff_difference_x) + border_width,
+                    (middle_y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    fill=color,
+                    width=2
+                )
+                canvas.create_line(
+                    (middle_x * coeff_difference_x) + border_width,
+                    (middle_y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    (second_coordinate[1] * coeff_difference_x) + border_width,
+                    (second_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    fill=color,
+                    width=2
+                )
+                way_list.append(way)
+
 if __name__ == "__main__":
     game_controller = GameManager()
