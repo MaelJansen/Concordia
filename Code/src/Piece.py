@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from Map import Position
+from Map import Position, Way
 
 class Piece(ABC):
     def __init__(self):
@@ -8,7 +8,9 @@ class Piece(ABC):
 class Colonist(Piece):
     def __init__(self):
         super().__init__()
-        self.position = None
+        self.type = None
+        self.color = None
+        self.colonist_way = Way()
 
 class Ressource(ABC):
     def __init__(self, ressource_price, ressource_bonus_value):
@@ -16,10 +18,8 @@ class Ressource(ABC):
         self.price = ressource_price
         self.bonus_value = ressource_bonus_value
         self.type = None
-
-    def bonus_value(type_ressource):
-        pass
-
-    def price_value(type_ressource):
-        pass
+        self.build_cost = None
+        self.color = None
+        self.name = None
+        
 

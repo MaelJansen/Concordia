@@ -7,7 +7,7 @@ from Player import Player
 from Map import Map
 import typing
 
-class GameController:
+class GameManager:
     def __init__(self):
         self.player_controller = None
         self.game_map = None
