@@ -12,6 +12,7 @@ class Player:
         self.house = City()
         self.discard_pile = Card()
         self.hand = Card()
+        self.my_houses = []
 
 class StoreHouse:
     def __init__(self):
