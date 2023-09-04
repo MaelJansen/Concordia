@@ -1,7 +1,8 @@
 from Personality import Personality
 from Player import Player
-from Piece import Ressource
 from Map import Map
+from typing import int, str
+
 
 class Card:
     """
@@ -21,12 +22,14 @@ class Card:
     -------
 
     """
+
     def __init__(self):
-        self.order = None
-        self.my_diety = None
-        self.my_personality = None
-        self.sale_cost = None
-        self.sale_cost_diplomat = None
+        self.order: int = None
+        self.my_diety: God = None
+        self.my_personality: Personality = None
+        self.sale_cost: int = None
+        self.sale_cost_diplomat: int = None
+
 
 class God:
     """
@@ -48,6 +51,7 @@ class God:
     point_calcultation(player : Player)
         Calculate the victory points for each gods
     """
+
     def __init__(self, diety_name):
         """
         Parameters
@@ -55,13 +59,13 @@ class God:
         diety_name : str
             the name of the diety
         """
-        self.name = diety_name
-        self.significance = None
-        self.rewards = None
-        self.example = None
-        self.victory_points = None
+        self.name: str = diety_name
+        self.significance: str = None
+        self.rewards: str = None
+        self.example: str = None
+        self.victory_points: int = None
 
-    def point_calculation(self, player : Player, map : Map):
+    def point_calculation(self, player: Player, map: Map):
         """
         Calculate the player's victory points related to the god
 
@@ -78,9 +82,11 @@ class God:
                 player.n_point += player.money // 10
 
             case "Jupiter":
-                vp :int = 0
+                vp: int = 0
                 for houses in player.my_houses:
-                    if vp < 15 & houses.assigned_city_token.assigned_ressource != "Brick":
+                    if vp < 15 and \
+                        houses.assigned_city_token.assigned_ressource \
+                            != "Brick":
                         vp += 1
                 player.n_point += vp
 
@@ -88,20 +94,23 @@ class God:
                 conquered_provinces = []
                 for provinces in map:
                     for city in provinces:
-                        if player.house == city & city not in conquered_provinces:
+                        if player.house == city and city \
+                            not in conquered_provinces:
                             conquered_provinces.append(city)
                 player.n_point += len(conquered_provinces)
 
             case "Mercurius":
-                producted_resources : list = []
+                producted_resources: list = []
                 for house in player.my_houses:
-                    if house.houses.assigned_city_token.assigned_ressource not in producted_resources:
-                        producted_resources.append(house.houses.assigned_city_token.assigned_ressource)
+                    if house.houses.assigned_city_token.assigned_ressource \
+                            not in producted_resources:
+                        producted_resources.append(
+                            house.houses.assigned_city_token.assigned_ressource)
                 player.n_point += len(producted_resources)*2
 
             case "Mars":
-                n_colonist :int = len(player.my_colonist)
-                vp :int = 0
+                n_colonist: int = len(player.my_colonist)
+                vp: int = 0
                 for stored_colonist in player.my_store_house:
                     if (stored_colonist.type == "colonist"):
                         n_colonist -= 1
@@ -114,16 +123,9 @@ class God:
             case "Minerva":
                 player.n_point += 0
 
-            
-            
-            
-
-
-
-
-
             case _:
-                #action
+                pass
+
 
 class MarketPlace:
     """
@@ -140,9 +142,11 @@ class MarketPlace:
     -------
 
     """
+
     def __init__(self):
         self.stack = ()
         self.display_area = ()
+
 
 class Numeral:
     """
@@ -159,6 +163,7 @@ class Numeral:
     -------
 
     """
+
     def __init__(self):
         self.value = None
         self.roman_number = None
