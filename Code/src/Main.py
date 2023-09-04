@@ -41,7 +41,7 @@ class Screen:
         self.ai_number: int = 0
         self.ai_difficulty: str = ""
         self.game_map: str = ""
-        
+        self.maps: list[str] = []
         self.map_button: List[tk.Button]
         self.capital: Tuple[str, int, int]
         self.cities: List[Tuple[str, int, int]] = []
@@ -57,6 +57,8 @@ class Screen:
         self.cursor = self.connection.cursor()
 
         self.create_game()
+        
+        self.cursor.close()
 
     def charge_map(self):
         """This method uses SQL resquests to get the capital, the cities and the ways of the map that have been choosed by the player to place them in list. The lists
