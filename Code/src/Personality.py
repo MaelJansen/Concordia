@@ -10,11 +10,6 @@ class Personality(ABC):
         self.card_action = None
         self.card_example = None
 
-    def __init__(self, name: str, card_action: str, card_example: str):
-        self.name = name
-        self.card_example = card_example
-        self.card_action = card_action
-
     @abstractmethod
     def personality_action(self, player: Player):
         pass
@@ -23,6 +18,7 @@ class Personality(ABC):
 class Architect(Personality):
     def __init__(self):
         super().__init__()
+        self.card_action = ""
 
     def personality_action(self, player: Player):
         # Function who ask the player what colons to move and move they colons
