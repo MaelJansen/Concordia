@@ -6,6 +6,7 @@ from screeninfo import get_monitors
 from Player import Player
 from Map import Map
 from typing import Type
+import oracledb
 
 class GameManager:
     def __init__(self):
@@ -32,18 +33,68 @@ class Screen:
         self.ai_number: int = 0
         self.ai_difficulty: str = ""
         self.game_map: str = ""
-        self.imperium_button: tk.Button 
-        self.italy_button: tk.Button 
-        self.temp_capitale: Tuple[str, int, int]
-        self.temp_villes: List[Tuple[str, int, int]]
-        self.temp_routes: Set[Tuple[Tuple[str, int, int], Tuple[str, int, int], str]]
+        
+        self.map_button: List[tk.Button]
+        self.capital: Tuple[str, int, int]
+        self.cities: List[Tuple[str, int, int]] = []
+        self.roads: Set[Tuple[Tuple[str, int, int], Tuple[str, int, int], str]] = []
+        
+        self.connection = oracledb.connect(
+            user="ETD",
+            password="ETD",
+            host="localhost",
+            port=1521,
+            sid="IUT12c"
+        )
+        self.cursor = self.connection.cursor()
 
         self.create_game()
 
-    def temp_game(self):
-        self.temp_capitale = ("Rome", 500, 500)
-        self.temp_villes = [("Venise", 100, 100), ("Paris", 50, 60), ("Madrid", 456, 689), ("Berlin", 870, 900), ("Tokyo", 321, 457), ("Sao-Paulo", 132, 873), ("Sao-Carlos", 103, 832), ("Biganos", 578, 213), ("Prague", 643, 43)]
-        self.temp_routes = [(self.temp_villes[5], self.temp_villes[6], "Land"), (self.temp_villes[5], self.temp_villes[6], "Water"), (self.temp_villes[5], self.temp_villes[6], "Air"), (self.temp_villes[5], self.temp_villes[2], "Land"), (self.temp_villes[2], self.temp_capitale, "Water"), (self.temp_villes[2], self.temp_villes[6], "Air")]
+    def charge_map(self):
+        
+        sql_query_capital = f"""SELECT t.MAP_CAPITAL.CITY_NAME AS CAPITAL, t.MAP_CAPITAL.CITY_COORDINATES.X as x, t.MAP_CAPITAL.CITY_COORDINATES.Y as y
+                            FROM T_Concordia, TABLE(T_Concordia.concordia_map) t 
+                            WHERE t.map_name='{self.game_map}'"""
+        self.cursor.execute(sql_query_capital)
+        for row in self.cursor:
+            self.capital = [row[0], row[1], row[2]]
+            
+            
+        sql_query_cities = f"""SELECT c.CITY_NAME as city_name,
+                            c.CITY_COORDINATES.X as x,
+                            c.CITY_COORDINATES.Y as y
+                            FROM T_Concordia, TABLE(T_Concordia.concordia_map) t , TABLE(t.MAP_PROVINCE) p , TABLE(p.province_city) c
+                            WHERE t.map_name='{self.game_map}'"""
+        self.cursor.execute(sql_query_cities)
+        for city in self.cursor:
+            temp_city = [city[0], city[1], city[2]]
+            self.cities.append(temp_city)
+            
+        sql_query_lines = f"""SELECT l.line_city_1 city1, l.line_city_2 city2, l.line_way way
+                            FROM T_Concordia, TABLE(T_Concordia.concordia_map) t, TABLE(t.MAP_LINE) l
+                            WHERE t.map_name='{self.game_map}'"""
+        self.cursor.execute(sql_query_lines)
+        for line in self.cursor:
+            first_city:int = line[0]
+            second_city:int = line[1]
+            index:int = 0
+            indice_first_city:int = -1
+            indice_second_city:int = -1
+            for city in self.cities:
+                if(city[0] == first_city):
+                    indice_first_city = index
+                elif(city[0] == second_city):
+                    indice_second_city = index
+                index = index + 1
+            self.roads.append([self.cities[indice_first_city], self.cities[indice_second_city], line[2]])
+            print([self.cities[indice_first_city], self.cities[indice_second_city], line[2]])
+            
+        self.cursor.close()
+
+        
+        # self.temp_ = ("Rome", 500, 500)
+        # self.temp_villes = [("Venise", 100, 100), ("Paris", 50, 60), ("Madrid", 456, 689), ("Berlin", 870, 900), ("Tokyo", 321, 457), ("Sao-Paulo", 132, 873), ("Sao-Carlos", 103, 832), ("Biganos", 578, 213), ("Prague", 643, 43)]
+        # self.roads = [(self.temp_villes[5], self.temp_villes[6], "Land"), (self.temp_villes[5], self.temp_villes[6], "Water"), (self.temp_villes[5], self.temp_villes[6], "Air"), (self.temp_villes[5], self.temp_villes[2], "Land"), (self.temp_villes[2], self.temp_, "Water"), (self.temp_villes[2], self.temp_villes[6], "Air")]
 
 
     def create_game(self):
@@ -217,32 +268,32 @@ class Screen:
         canvas.create_line(border_width, dimensions.height*0.25, dimensions.width - border_width, dimensions.height*0.25, fill="black", width=3) 
         canvas.create_line(dimensions.width * 0.33, border_width, dimensions.width * 0.33, dimensions.height*0.25, fill="black", width=3) 
 
-        self.temp_game()
+        self.charge_map()
 
         max_x:int = 0
         max_y:int = 0
 
-        for ville in self.temp_villes:
-            nom, x, y = ville
+        for city in self.cities:
+            nom, x, y = city
             max_x = max(max_x, x)  
             max_y = max(max_y, y) 
 
         coeff_difference_x:float = (dimensions.width - border_width * 4) / max_x
         coeff_difference_y:float = (dimensions.height * 0.75 - border_width * 4) / max_y
 
-        canvas.create_oval((self.temp_capitale[1] * coeff_difference_x) + border_width - 10, (self.temp_capitale[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) - 10, (self.temp_capitale[1] * coeff_difference_x) + border_width + 10, (self.temp_capitale[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="red")
-        canvas.create_text((self.temp_capitale[1] * coeff_difference_x) + border_width, (self.temp_capitale[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 15, text=self.temp_capitale[0], font=("Helvetica", 8))
+        canvas.create_oval((self.capital[1] * coeff_difference_x) + border_width - 10, (self.capital[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) - 10, (self.capital[1] * coeff_difference_x) + border_width + 10, (self.capital[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="red")
+        canvas.create_text((self.capital[1] * coeff_difference_x) + border_width, (self.capital[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 15, text=self.capital[0], font=("Helvetica", 8))
 
-        for cities in self.temp_villes:
-            canvas.create_oval((cities[1] * coeff_difference_x) + border_width - 10, (cities[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) - 10, (cities[1] * coeff_difference_x) + border_width + 10, (cities[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="black")
-            canvas.create_text((cities[1] * coeff_difference_x) + border_width, (cities[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 15, text=cities[0], font=("Helvetica", 8))
+        for city in self.cities:
+            canvas.create_oval((city[1] * coeff_difference_x) + border_width - 10, (city[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) - 10, (city[1] * coeff_difference_x) + border_width + 10, (city[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="black")
+            canvas.create_text((city[1] * coeff_difference_x) + border_width, (city[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 15, text=city[0], font=("Helvetica", 8))
 
-        for way in self.temp_routes:
+        for way in self.roads:
             x_coordinate, y_coordinate, transport_mode = way
 
-            if(transport_mode == "Land"):
+            if(transport_mode == "land"):
                 color:str = "lightgreen"
-            elif(transport_mode == "Water"):
+            elif(transport_mode == "sea"):
                 color:str = "blue"
             else:
                 color:str = "gray"
