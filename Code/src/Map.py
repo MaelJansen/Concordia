@@ -155,10 +155,6 @@ class Way:
         self.n_colonist = None
         self.name = None
         
-        
-   Certainly, let's implement a simple example of the is_valid_move_for_colonist method in the Way class. In this example, we'll consider that a move is valid if the way is not already occupied by another colonist and if the colonist's type matches the type of the way.
-
-Here's the updated Way class with the is_valid_move_for_colonist method:
 
 python
 
