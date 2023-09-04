@@ -10,7 +10,22 @@ import typing
 from Piece import Ressource
 from Piece import Colonist
 
-class Personality(ABC):
+class Personality(ABC):"""
+    A class to represent the personality of cards and their actions
+
+    ...
+
+    Attributes
+    ----------
+    name : sting
+    card_action : srting
+    card_example : string
+
+    Methods
+    -------
+    personality_action()
+        the action that will be launch when we play the card
+    """
     def __init__(self):
         self.name = self.__class__.__name__.replace('_', '')
         self.card_action = None
@@ -20,6 +35,20 @@ class Personality(ABC):
         pass
 
 class Architect(Personality):
+    """
+    A class to represent the architect card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the architect's actions
+
+    """
     def __init__(self):
         super().__init__()
         name: str = 'Architect'
@@ -46,12 +75,19 @@ class Architect(Personality):
 
 class Colonist_(Personality):
     """
-    Class Colonist_ 
+    A class to represent the colonist card
 
-    Args:
-        Personality (_type_): _description_
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the colonist's actions
+
     """
-    
     def __init__(self):
         super().__init__()
         name: str = 'Colonist'
@@ -144,6 +180,20 @@ class Colonist_(Personality):
             
 
 class Concordia(Personality):
+    """
+    A class to represent Concordia card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch concordia's action
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -152,6 +202,20 @@ class Concordia(Personality):
         pass
 
 class Consul(Personality):
+    """
+    A class to represent the consul card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the consul's actions
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -160,6 +224,20 @@ class Consul(Personality):
         pass
 
 class Diplomat(Personality):
+    """
+    A class to represent the diplomat card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the diplomat's actions
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -168,6 +246,20 @@ class Diplomat(Personality):
         pass
 
 class Mercator(Personality):
+    """
+    A class to represent the Mercator card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the mercator's action's
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -176,6 +268,20 @@ class Mercator(Personality):
         pass
 
 class Prefect(Personality):
+    """
+    A class to represent the prefect card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the prefect's actions
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -184,6 +290,20 @@ class Prefect(Personality):
         pass
 
 class PrefectusMagnus(Personality):
+    """
+    A class to represent the prefect magnus card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the prefect magnus's actions
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -193,6 +313,20 @@ class PrefectusMagnus(Personality):
 
 
 class Senator(Personality):
+    """
+    A class to represent the senator card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the senator's actions
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -201,6 +335,20 @@ class Senator(Personality):
         pass
 
 class Specialist(Personality):
+    """
+    A class to represent the specialist card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the specialist's actions
+
+    """
     def __init__(self):
         super().__init__()
         self.name = None
@@ -210,15 +358,21 @@ class Specialist(Personality):
         pass
 
 class Tribune(Personality):
+    """
+    A class to represent the tribune card
+
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    personality_action()
+        function to launch the tribune's actions
+
+    """
     def __init__(self):
-        super().__init__()
-
-    @abstractmethod
-    def personality_action():
-        pass
-
-class Concordia(Personality):
-    def ___init___(self):
         super().__init__()
 
     @abstractmethod
