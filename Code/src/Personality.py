@@ -22,10 +22,27 @@ class Personality(ABC):
 class Architect(Personality):
     def __init__(self):
         super().__init__()
+        name: str = 'Architect'
+        card_action: str = 'You may build a city tile for free and move your colonists to it.'
+        
 
     @abstractmethod
     def personality_action():
-        pass
+        windows = tk.Toplevel(root)
+        windows.title("Move your colonists")
+        windows.resizable(False, False)
+        
+        windows_width = 300
+        windows_height = 110
+        
+        dimensions = get_monitors()[0]
+        
+        x_coordinate = int((dimensions.width - windows_width) // 2)
+        y_coordinate = int((dimensions.height - windows_height) // 2)
+        
+        windows.geometry(f"{windows_width}x{windows_height}+{x_coordinate}+{y_coordinate}")
+        
+        
 
 class Colonist_(Personality):
     
