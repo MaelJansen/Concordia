@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from Piece import Ressource, Colonist
 from Player import Player
-from enum import Enum
-
+from Card import Card
 
 class Personality(ABC):
     def __init__(self):
@@ -29,7 +28,7 @@ class Architect(Personality):
         pass
 
 
-class Colonist(Personality):
+class ColonialManager(Personality):
     def __init__(self):
         super().__init__()
 
@@ -40,7 +39,7 @@ class Colonist(Personality):
             # A function who can demand what colons to add
             player.add_colons()
         else:
-            player.gain_money(5 + player.my_colonist.__sizeof__())
+            player.gain_money(5 + player.number_of_colon())
 
 
 class Concordia(Personality):
@@ -66,7 +65,10 @@ class Diplomat(Personality):
 
     def personality_action(self, player: Player):
         # Ask the player to choice another discard's player
+        player_choice: Player = player.choice_discard()
         # and play the card on the top of this discard
+        discard_player_choice = player_choice.discard_pile
+        discard_player_choice[len(discard_player_choice) - 1].my_personality.personality_action(player)
         pass
 
 
@@ -136,11 +138,14 @@ class Tribune(Personality):
         super().__init__()
 
     def personality_action(self, player: Player):
-        nb_carte_added = player.take_all_defause()
-        money_earned = nb_carte_added - 3
+        # take all card of our discard + return the number of card won
+        nb_cards_added = player.discard_pile.__sizeof__()
+        for card in player.discard_pile:
+            player.hand.append(card)
+        money_earned = nb_cards_added - 3
         if money_earned > 0:
             player.gain_money(money_earned)
-        pass
+        player.add_colon()
 
 
 class Concordia(Personality):
