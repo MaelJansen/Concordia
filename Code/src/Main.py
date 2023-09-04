@@ -1,4 +1,5 @@
 from ast import List, Set, Tuple
+from math import atan2, degrees
 import tkinter as tk
 from tkinter import ttk
 from PIL import ImageTk, Image
@@ -43,7 +44,7 @@ class Screen:
     def temp_game(self):
         self.temp_capitale = ("Rome", 500, 500)
         self.temp_villes = [("Venise", 100, 100), ("Paris", 50, 60), ("Madrid", 456, 689), ("Berlin", 870, 900), ("Tokyo", 321, 457), ("Sao-Paulo", 132, 873), ("Sao-Carlos", 103, 832), ("Biganos", 578, 213), ("Prague", 643, 43)]
-        self.temp_routes = [(self.temp_villes[5], self.temp_villes[6], "Land"), (self.temp_villes[5], self.temp_villes[6], "Water"), (self.temp_villes[5], self.temp_villes[6], "Air"), (self.temp_villes[5], self.temp_villes[2], "Land"), (self.temp_villes[2], self.temp_capitale, "Water"), (self.temp_villes[2], self.temp_villes[6], "Air")]
+        self.temp_routes = [(self.temp_villes[2], self.temp_villes[6], "Land"), (self.temp_villes[2], self.temp_villes[6], "Water"), (self.temp_villes[5], self.temp_villes[6], "Air"), (self.temp_villes[5], self.temp_villes[2], "Land"), (self.temp_villes[2], self.temp_capitale, "Water"), (self.temp_villes[2], self.temp_villes[6], "Air")]
 
 
     def create_game(self):
@@ -237,8 +238,9 @@ class Screen:
             canvas.create_oval((cities[1] * coeff_difference_x) + border_width - 10, (cities[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) - 10, (cities[1] * coeff_difference_x) + border_width + 10, (cities[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="black")
             canvas.create_text((cities[1] * coeff_difference_x) + border_width, (cities[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 15, text=cities[0], font=("Helvetica", 8))
 
+        way_list = []
         for way in self.temp_routes:
-            x_coordinate, y_coordinate, transport_mode = way
+            first_coordinate, second_coordinate, transport_mode = way
 
             if(transport_mode == "Land"):
                 color:str = "lightgreen"
@@ -247,7 +249,64 @@ class Screen:
             else:
                 color:str = "gray"
 
-            canvas.create_line((x_coordinate[1] * coeff_difference_x) + border_width, (y_coordinate[1] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3), (x_coordinate[2] * coeff_difference_x) + border_width, (y_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3), fill=color, width=2)
-        
+            similar_road_number:int = 0
+            for past_way in way_list:
+                past_first_coordinate, past_second_coordinate, past_transport_mode = past_way
+                if(first_coordinate == past_first_coordinate and second_coordinate == past_second_coordinate):
+                    similar_road_number = similar_road_number + 1
+
+            if similar_road_number == 0:
+                canvas.create_line(
+                    (first_coordinate[1] * coeff_difference_x) + border_width,
+                    (first_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    (second_coordinate[1] * coeff_difference_x) + border_width,
+                    (second_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    fill=color,
+                    width=2
+                )
+                way_list.append(way)
+            elif similar_road_number == 1:
+                middle_x = (first_coordinate[1] + second_coordinate[1]) / 2
+                middle_y = (first_coordinate[2] + second_coordinate[2]) / 2 + 30
+
+                canvas.create_line(
+                    (first_coordinate[1] * coeff_difference_x) + border_width,
+                    (first_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    (middle_x * coeff_difference_x) + border_width,
+                    (middle_y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    fill=color,
+                    width=2
+                )
+                canvas.create_line(
+                    (middle_x * coeff_difference_x) + border_width,
+                    (middle_y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    (second_coordinate[1] * coeff_difference_x) + border_width,
+                    (second_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    fill=color,
+                    width=2
+                )
+                way_list.append(way)
+            elif similar_road_number == 2:
+                middle_x = (first_coordinate[1] + second_coordinate[1]) / 2
+                middle_y = (first_coordinate[2] + second_coordinate[2]) / 2 - 30
+
+                canvas.create_line(
+                    (first_coordinate[1] * coeff_difference_x) + border_width,
+                    (first_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    (middle_x * coeff_difference_x) + border_width,
+                    (middle_y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    fill=color,
+                    width=2
+                )
+                canvas.create_line(
+                    (middle_x * coeff_difference_x) + border_width,
+                    (middle_y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    (second_coordinate[1] * coeff_difference_x) + border_width,
+                    (second_coordinate[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
+                    fill=color,
+                    width=2
+                )
+                way_list.append(way)
+
 if __name__ == "__main__":
     game_controller = GameManager()
