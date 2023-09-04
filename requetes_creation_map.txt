@@ -1,0 +1,53 @@
+#Récuperer la capitale de la map
+SELECT t.MAP_CAPITAL.CITY_NAME AS CAPITAL FROM T_Concordia, TABLE(T_Concordia.concordia_map	) t WHERE t.map_name={map}
+
+---
+
+#Récuperer coordonnées de la map
+select t.map_max_coordinates.X as CooX from T_concordia, Table(T_concordia.concordia_map) t
+
+---
+
+#Nombre de joueurs min et max
+select t.map_min_n_player as MinPlayer, t.map_max_n_player as MaxPlayer from T_concordia, Table(T_concordia.concordia_map) t
+
+---
+
+#Toutes les provinces d'une map
+SELECT p.PROVINCE_NAME as province_name,
+p.PROVINCE_ROMAN_NUM as roman_num,
+p.PROVINCE_COORDINATES.X as x,
+p.PROVINCE_COORDINATES.Y as y,
+p.PROVINCE_COORDINATES.Z as Z
+FROM T_Concordia, TABLE(T_Concordia.concordia_map) t , TABLE(t.MAP_PROVINCE) p
+WHERE t.map_name='Imperium';
+
+---
+
+#Toutes les villes d'une province pour une map
+SELECT c.CITY_NAME as city_name,
+c.CITY_ROMAN_CHAR as roman_num,
+c.CITY_COORDINATES.X as x,
+c.CITY_COORDINATES.Y as y,
+c.CITY_COORDINATES.Z as Z
+FROM T_Concordia, TABLE(T_Concordia.concordia_map) t , TABLE(t.MAP_PROVINCE) p , TABLE(p.province_city) c
+WHERE t.map_name='Imperium'
+AND p.province_name = 'SYRIA';
+
+---
+
+#Toutes les cartes et leurs attributs
+select t.card_name as Name, t.card_god as God,  from t_concordia,t.card_action as Action, t.card_example as Example TABLE(t_concordia.concordia_card) t
+
+---
+
+#Toutes les line pour une map
+SELECT l.line_city_1 city1, l.line_city_2 city2, l.line_way way
+FROM T_Concordia, TABLE(T_Concordia.concordia_map) t, TABLE(t.MAP_LINE) l
+WHERE t.map_name='Imperium';
+
+---
+
+#Toutes les way
+SELECT w.way_name name , w.way_color color
+FROM T_Concordia, TABLE(T_Concordia.concordia_way) w

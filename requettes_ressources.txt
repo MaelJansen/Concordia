@@ -1,0 +1,4 @@
+#Toutes les cartes et leurs attributs
+select t.card_name as Name, t.card_god as God,  from t_concordia,t.card_action as Action, t.card_example as Example TABLE(t_concordia.concordia_card) t
+
+
