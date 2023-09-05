@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from Map import Position, Way
+import Map
 
 class Piece(ABC):
     """
@@ -40,7 +40,7 @@ class Colonist(Piece):
         super().__init__()
         self.type = colonist_type
         self.color = colonist_color
-        self.colonist_way = Way()
+        self.colonist_way = Map.Way()
 
     def move(self, way):
         if way.is_valid_move_for_colonist(self):

@@ -1,7 +1,7 @@
-from Personality import Personality
-from Player import Player
-from Piece import Ressource
-from Map import Map
+import Personalities
+import Players
+import Pieces
+import Map
 
 class Card:
     """
@@ -61,7 +61,7 @@ class God:
         self.example = None
         self.victory_points = None
 
-    def point_calculation(self, player : Player, map : Map):
+    def point_calculation(self, player : Players.Player, map : Map):
         """
         Calculate the player's victory points related to the god
 
@@ -113,17 +113,9 @@ class God:
 
             case "Minerva":
                 player.n_point += 0
-
-            
-            
-            
-
-
-
-
-
             case _:
                 #action
+                pass
 
 class MarketPlace:
     """
