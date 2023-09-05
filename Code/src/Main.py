@@ -3,8 +3,8 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import ImageTk, Image
 from screeninfo import get_monitors
-from Player import Player
-from Map import Map
+#import Players
+import Map
 import typing
 
 class GameManager:
@@ -220,4 +220,4 @@ class Screen:
         temp_label.pack()
         
 if __name__ == "__main__":
-    game_controller = GameController()
+    game_controller = GameManager()

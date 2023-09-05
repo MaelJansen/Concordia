@@ -4,13 +4,13 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import ImageTk, Image
 from screeninfo import get_monitors
-from Player import Player
-from Map import Map
+import Players
+import Map
 import typing
-from Piece import Ressource
-from Piece import Colonist
+import Pieces
 
-class Personality(ABC):"""
+class Personality(ABC):
+    """
     A class to represent the personality of cards and their actions
 
     ...
@@ -94,7 +94,7 @@ class Colonist_(Personality):
         card_action: str = 'You may place a colonist on a city tile that does not have a colonist.'
     
     @abstractmethod
-    def personality_action(player: Player, root: tk.Tk, map: Map):
+    def personality_action(player: Players.Player, root: tk.Tk, map: Map):
         """"
         Play the personality action of the player
         
@@ -159,7 +159,7 @@ class Colonist_(Personality):
             city_tile_box = ttk.Combobox(city_tile_window, values=map.city_tiles)
             city_tile_box.pack()
                   
-            new_colon: Colonist = Colonist()
+            new_colon: Pieces.Colonist = Pieces.Colonist()
             new_colon.move(map.city_tiles[city_tile_box.current()])
             
         def collect_sesterces():

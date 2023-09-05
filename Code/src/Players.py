@@ -1,6 +1,6 @@
-from Piece import Piece, Colonist
-from Card import Card, MarketPlace
-from Map import City
+import Pieces
+import Cards
+import Map
 
 class Player:
     """
@@ -27,12 +27,12 @@ class Player:
         self.money = 0
         self.color = ()
         self.my_store_house = StoreHouse()
-        self.my_colonist = Colonist()
-        self.house = City()
-        self.discard_pile = Card()
-        self.hand = Card()
+        self.my_colonist = Pieces.Colonist()
+        self.house = Map.City()
+        self.discard_pile = Cards.Card()
+        self.hand = Cards.Card()
         self.my_houses = []
 
 class StoreHouse:
     def __init__(self):
-        self.my_pieces = Piece()
+        self.my_pieces = Pieces.Piece()

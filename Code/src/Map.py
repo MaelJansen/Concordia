@@ -154,9 +154,6 @@ class Way:
         self.max_colonist = None
         self.n_colonist = None
         self.name = None
-        
-
-python
 
 class Way:
     """
