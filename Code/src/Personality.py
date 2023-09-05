@@ -1,26 +1,26 @@
 from abc import ABC, abstractmethod
-from Piece import Ressource, Colonist
-from Player import Player
+from Pieces import Resource, Colonist
+import Players
 from Map import Province, Map
 from Map import City, Line, Position
-from Card import Card
+import Cards
 
 
 class Personality(ABC):
-    def __init__(self, p: Player):
+    def __init__(self, p: Players):
         self.name = self.__class__.__name__.replace('_', '')
         self.card_action = None
         self.card_example = None
-        self.player: Player = p
+        self.player: Players = p
 
     def could_pay_house(self, city: City):
-        resource_city: Ressource = city.assigned_city_token.assigned_resource
+        resource_city: Resource = city.assigned_city_token.assigned_resource
 
         player_pieces = self.player.my_store_house.my_pieces
         a_brick = False
         a_resource = False
         for piece in player_pieces:
-            if piece is Ressource:
+            if piece is Resource:
                 if resource_city.name == "brick" and piece.name == "food":
                     return True
                 if resource_city.name == piece.name:
@@ -37,13 +37,13 @@ class Personality(ABC):
         return True
 
     def pay_house(self, city: City):
-        good_city: Ressource = city.assigned_city_token.assigned_resource
+        good_city: Resource = city.assigned_city_token.assigned_resource
         player_pieces = self.player.my_store_house.my_pieces
 
         has_pay_good = False
         has_pay_brick = False
         for piece in player_pieces:
-            if piece is Ressource:
+            if piece is Resource:
                 if good_city.name == "brick" and piece.name == "food":
                     player_pieces.remove(piece)
                     break
@@ -88,7 +88,7 @@ class Architect(Personality):
 
     """
 
-    def __init__(self, p: Player):
+    def __init__(self, p: Players):
         super().__init__(p)
         self.card_action = ""
 
@@ -151,7 +151,7 @@ class Colonist_(Personality):
 
     """
 
-    def __init__(self, p: Player):
+    def __init__(self, p: Players):
         super().__init__(p)
 
     def personality_action(self):
@@ -180,7 +180,7 @@ class Concordia(Personality):
 
     """
 
-    def __init__(self, p: Player):
+    def __init__(self, p: Players):
         super().__init__(p)
 
     def personality_action(self):
@@ -203,12 +203,12 @@ class Consul(Personality):
 
     """
 
-    def __init__(self, p: Player):
+    def __init__(self, p: Players):
         super().__init__(p)
 
     def personality_action(self):
         # Ask the player to buy a card in market without additional cost
-        card_chose: Card = self.player.buy_in_market(False)
+        card_chose: Cards = self.player.buy_in_market(False)
         if card_chose is not None:
             cost_of_card = card_chose.card_cost
             if self.could_pay(cost_of_card):
@@ -230,12 +230,12 @@ class Diplomat(Personality):
 
     """
 
-    def __init__(self, p: Player):
+    def __init__(self, p: Players):
         super().__init__(p)
 
     def personality_action(self):
         # Ask the player to choice another discard's player
-        player_choice: Player = self.player.choice_discard()
+        player_choice: Players = self.player.choice_discard()
         # and play the card on the top of this discard
         discard_player_choice = player_choice.discard_pile
         discard_player_choice[len(discard_player_choice) - 1].my_personality.personality_action(self.player)
@@ -260,7 +260,7 @@ class Mercator(Personality):
 
     was_buy = False
 
-    def __init__(self, p: Player):
+    def __init__(self, p: Players):
         super().__init__(p)
 
     def personality_action(self):
@@ -278,12 +278,12 @@ class Mercator(Personality):
             purchase = self.player.controller.buy()
 
             for resource in sale:
-                resource: Ressource
+                resource: Resource
                 if self.player.my_store_house.my_pieces.__contain__(resource):
                     self.player.money += resource.price
                     self.player.my_store_house.my_pieces.remove(resource)
             for resource in purchase:
-                resource: Ressource
+                resource: Resource
                 if self.player.money >= resource.price:
                     self.player.money -= resource.price
                     self.player.my_store_house.my_pieces.add(resource)
@@ -307,7 +307,7 @@ class Prefect(Personality):
 
     """
 
-    def __init__(self, p: Player):
+    def __init__(self, p: Players):
         super().__init__(p)
 
     def personality_action(self):
@@ -345,7 +345,7 @@ class PrefectusMagnus(Personality):
 
     """
 
-    def __init__(self, p: Player):
+    def __init__(self, p: Players):
         super().__init__(p)
 
     def personality_action(self):
@@ -368,12 +368,12 @@ class Senator(Personality):
 
     """
 
-    def __init__(self, p: Player):
+    def __init__(self, p: Players):
         super().__init__(p)
 
     def personality_action(self):
-        card_choose_1: Card
-        card_choose_2: Card
+        card_choose_1: Cards
+        card_choose_2: Cards
         card_choose_1, card_choose_2 = self.player.controller.choose_cards_market()
         if card_choose_1 is not None:
             if self.could_pay(card_choose_1.card_cost):
@@ -400,7 +400,7 @@ class Specialist(Personality):
 
     """
 
-    def __init__(self, p: Player, type_spec: Ressource):
+    def __init__(self, p: Players, type_spec: Resource):
         super().__init__(p)
         self.type = type_spec
 
@@ -428,7 +428,7 @@ class Tribune(Personality):
 
     """
 
-    def __init__(self, p: Player):
+    def __init__(self, p: Players):
         super().__init__(p)
 
     def personality_action(self):
