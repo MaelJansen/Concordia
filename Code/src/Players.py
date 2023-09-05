@@ -1,7 +1,6 @@
-from Code.src.Main import PlayerController
-from Piece import Piece, Colonist
-from Card import Card, MarketPlace
-from Map import City
+import Pieces
+import Cards
+import Map
 
 class Player:
     """
@@ -23,22 +22,17 @@ class Player:
     -------
 
     """
-
-    controller: PlayerController
-
     def __init__(self):
         self.n_point = 0
         self.money = 0
         self.color = ()
         self.my_store_house = StoreHouse()
-        self.my_colonist = []
-        self.house = City()
-        self.discard_pile = Card()
-        self.hand = []
+        self.my_colonist = Pieces.Colonist()
+        self.house = Map.City()
+        self.discard_pile = Cards.Card()
+        self.hand = Cards.Card()
         self.my_houses = []
-        self.controller = None
-
 
 class StoreHouse:
     def __init__(self):
-        self.my_pieces = Piece()
+        self.my_pieces = Pieces.Piece()

@@ -2,8 +2,8 @@ import unittest
 import typing
 
 from src.Card import Card, MarketPlace
-from Code.src.Personality import *
-from Code.src.Player import *
+from Personalities import *
+from Players import *
 from Code.src.Map import *
 
 class PersonalityTest:

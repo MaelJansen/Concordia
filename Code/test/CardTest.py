@@ -1,8 +1,8 @@
-from Player import Player
+from Players import Player
 from Map import City, CityToken
-from Card import Card, God
-from Personality import Personality, Concordia, Architect, Consul, Mercator, Prefect, Senator, Specialist, Tribune
-from Piece import Ressource, Colonist
+from Cards import Card, God
+from Personalities import Personality, Concordia, Architect, Consul, Mercator, Prefect, Senator, Specialist, Tribune
+from Pieces import Ressource, Colonist
 import unittest
 
 class CardTest:
