@@ -21,10 +21,12 @@ class Card:
     -------
 
     """
+
     def __init__(self):
         self.order = None
         self.my_diety = None
         self.my_personality = None
+        self.card_cost = []
         self.sale_cost = None
         self.sale_cost_diplomat = None
 
