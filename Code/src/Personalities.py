@@ -3,7 +3,7 @@ from Pieces import Resource, Colonist
 import Players
 from Map import Province, Map
 from Map import City, Line, Position
-import Cards
+from Cards import Card
 
 
 class Personality(ABC):
@@ -208,7 +208,7 @@ class Consul(Personality):
 
     def personality_action(self):
         # Ask the player to buy a card in market without additional cost
-        card_chose: Cards = self.player.buy_in_market(False)
+        card_chose: Card = self.player.buy_in_market(False)
         if card_chose is not None:
             cost_of_card = card_chose.card_cost
             if self.could_pay(cost_of_card):
@@ -311,6 +311,14 @@ class Prefect(Personality):
         super().__init__(p)
 
     def personality_action(self):
+        had_magnus = False
+        prefectus_magnus = None
+        for c in self.player.hand:
+            c: Card
+            if c.my_personality.name == PrefectusMagnus.__name__.replace("_",""):
+                had_magnus = True
+                prefectus_magnus = c.my_personality
+                break
         want_goods = self.player.controller.want_good()
         good_choice = False
         if want_goods:
@@ -319,6 +327,9 @@ class Prefect(Personality):
                 good_choice = province.side_resource_bonus
                 if good_choice:
                     self.player.my_store_house.my_pieces.append(province.ressource_bonus)
+                    if had_magnus:
+                        self.player.my_store_house.my_pieces.append(province.ressource_bonus)
+                        prefectus_magnus.personality_action()
                     province.side_resource_bonus = False
         else:
             map : Map = self.player.controller.game_map
@@ -349,6 +360,12 @@ class PrefectusMagnus(Personality):
         super().__init__(p)
 
     def personality_action(self):
+        numbers_next_player = ((self.player.controller.current_player_index + 1)
+                               % len(self.player.controller.player_list))
+        player_next: Players = self.player.controller.player_list[numbers_next_player]
+        self.player.hand.remove(self)
+        self.player = player_next
+        player_next.hand.append(self)
         pass
 
 
@@ -372,8 +389,8 @@ class Senator(Personality):
         super().__init__(p)
 
     def personality_action(self):
-        card_choose_1: Cards
-        card_choose_2: Cards
+        card_choose_1: Card
+        card_choose_2: Card
         card_choose_1, card_choose_2 = self.player.controller.choose_cards_market()
         if card_choose_1 is not None:
             if self.could_pay(card_choose_1.card_cost):
