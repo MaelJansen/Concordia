@@ -1,6 +1,7 @@
 from ast import List, Set, Tuple
 from math import atan2, degrees
 import tkinter as tk
+import pprint
 from tkinter import ttk
 from PIL import ImageTk, Image
 from screeninfo import get_monitors
@@ -100,8 +101,7 @@ class GameManager:
             current_player.setup_sestertii(sestertii_data)
 
     def get_player_setup_data(self):
-        # Implement SQL queries to retrieve player setup data
-        # Execute the SQL queries and retrieve the data
+        # Executing the SQL queries to retrieve the data
         sql_query_colonists = f"""SELECT spc.setup_p_colon_way,
                             spc.setup_p_colon_n_colonists,
                             spc.setup_p_colon_n_colonists_cap
@@ -112,8 +112,6 @@ class GameManager:
         for row in self.cursor:
             temp_colonists_data = [row[0], row[1], row[2]]
             colonists_data.append(temp_colonists_data)
-        
-        print(colonists_data)
 
         sql_query_goods = f"""SELECT spg.setup_p_good_good ,
                             spg.setup_p_good_n_goods
@@ -124,25 +122,64 @@ class GameManager:
         for row in self.cursor:
             temp_goods_data = [row[0], row[1]]
             goods_data.append(temp_goods_data)
-        
-        print(goods_data)
 
         sql_query_cards = f"""SELECT spc.setup_p_card_card ,
                             spc.setup_p_card_n_copies
                             FROM T_Concordia t, table(t.concordia_setup_player.setup_p_card) spc """
-        
+        self.cursor.execute(sql_query_cards)
+        cards_data = []
+        for row in self.cursor:
+            temp_cards_data = [row[0], row[1]]
+            cards_data.append(temp_cards_data)
 
-        # Example data (replace with actual data)
-        player_setup_data = [
-            {
-                "colonists": {"way": "some_way", "n_colonists": 5, "n_colonists_cap": 10},
-                "goods": {"good": "some_good", "n_goods": 20},
-                "houses": 3,
-                "cards": {"card": "some_card", "n_copies": 2},
-                "sestertii": {"order_of_play": 1, "n_sestertii": 50, "n_sestertii_variant": 100},
-            },
-            # Add data for other players here
-        ]
+        sql_query_houses = f"""SELECT t.concordia_setup_player.setup_p_n_houses
+                            FROM T_Concordia t"""
+        self.cursor.execute(sql_query_houses)
+        houses_data = []
+        for row in self.cursor:
+            temp_houses_data = [row[0]]
+            houses_data.append(temp_houses_data)
+
+        sql_query_sestertii = f"""SELECT sps.setup_p_se_order_of_play ,
+                                sps.setup_p_se_n_sestertii ,
+                                sps.setup_p_se_n_sestertii_variant
+                                FROM T_Concordia t, table(t.concordia_setup_player.setup_p_sestertius) sps"""
+        
+        self.cursor.execute(sql_query_sestertii)
+        sestertii_data = []
+        for row in self.cursor:
+            temp_sestersii_data = [row[0], row[1], row[2]]
+            sestertii_data.append(temp_sestersii_data)
+
+        # Creating a list to hold player setup data
+        player_setup_data = []
+
+        for i in range(len(colonists_data)):
+            player_data = {
+                "colonists": {
+                    "way": colonists_data[i][0],
+                    "n_colonists": colonists_data[i][1],
+                    "n_colonists_cap": colonists_data[i][2]
+                },
+                "goods": {
+                    "good": goods_data[i][0],
+                    "n_goods": goods_data[i][1]
+                },
+                "houses": houses_data[0][0], 
+                "cards": {
+                    "card": cards_data[i][0],
+                    "n_copies": cards_data[i][1]
+                },
+                "sestertii": {
+                    "order_of_play": sestertii_data[i][0],
+                    "n_sestertii": sestertii_data[i][1]
+                }
+            }
+            
+            player_setup_data.append(player_data)
+
+        pprint.pprint()
+        pprint.pprint(player_setup_data)
 
         return player_setup_data
 
