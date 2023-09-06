@@ -1,15 +1,15 @@
-<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>740</x><y>910</y><w>210</w><h>190</h></coordinates><panel_attributes>Player
+<diagram program="umletino" version="15.1"><zoom_level>7</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>565</x><y>701</y><w>147</w><h>133</h></coordinates><panel_attributes>Player
 --
  + n_points : int
  + money : int
  + color : RGB
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>740</x><y>1180</y><w>210</w><h>170</h></coordinates><panel_attributes>Card
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>565</x><y>890</y><w>147</w><h>119</h></coordinates><panel_attributes>Card
 --
 + sale_cost : int 
 + sale_cost_diplomat : int
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>440</x><y>1170</y><w>200</w><h>130</h></coordinates><panel_attributes>God
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>355</x><y>883</y><w>140</w><h>91</h></coordinates><panel_attributes>God
 --
  + name : String
  + significacne : String
@@ -17,37 +17,37 @@
  + example : String
  + victory_points : int
 --
- + point_calculation (Player) : int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>310</x><y>1320</y><w>180</w><h>120</h></coordinates><panel_attributes>&lt;&lt;Abstract&gt;&gt;
+ + point_calculation (Player) : int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>264</x><y>988</y><w>126</w><h>84</h></coordinates><panel_attributes>&lt;&lt;Abstract&gt;&gt;
 Personality
 --
  + name : String
  + card_action : String
  + card_example : String
 --
- + personality_action () :  void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1080</x><y>1180</y><w>210</w><h>170</h></coordinates><panel_attributes>MarketPlace
+ + personality_action () :  void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>803</x><y>890</y><w>147</w><h>119</h></coordinates><panel_attributes>MarketPlace
 --
 
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>670</x><y>1180</y><w>90</w><h>40</h></coordinates><panel_attributes>lt=&lt;-
-0..1 my_diety</panel_attributes><additional_attributes>10;20;70;20</additional_attributes></element><element><id>Relation</id><coordinates><x>480</x><y>1320</y><w>280</w><h>40</h></coordinates><panel_attributes>lt=&lt;-
-1 my_personnality</panel_attributes><additional_attributes>10;20;260;20</additional_attributes></element><element><id>Relation</id><coordinates><x>940</x><y>1270</y><w>160</w><h>40</h></coordinates><panel_attributes>lt=&lt;-
-m1= 0..* stack</panel_attributes><additional_attributes>10;10;140;10</additional_attributes></element><element><id>Relation</id><coordinates><x>940</x><y>1310</y><w>160</w><h>40</h></coordinates><panel_attributes>lt=&lt;-
-m1= 0..7 display_area</panel_attributes><additional_attributes>10;10;140;10</additional_attributes></element><element><id>Relation</id><coordinates><x>880</x><y>1090</y><w>80</w><h>110</h></coordinates><panel_attributes>lt=&lt;-
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>516</x><y>890</y><w>63</w><h>28</h></coordinates><panel_attributes>lt=&lt;-
+0..1 my_diety</panel_attributes><additional_attributes>10;20;70;20</additional_attributes></element><element><id>Relation</id><coordinates><x>383</x><y>988</y><w>196</w><h>28</h></coordinates><panel_attributes>lt=&lt;-
+1 my_personnality</panel_attributes><additional_attributes>10;20;260;20</additional_attributes></element><element><id>Relation</id><coordinates><x>705</x><y>953</y><w>112</w><h>28</h></coordinates><panel_attributes>lt=&lt;-
+m1= 0..* stack</panel_attributes><additional_attributes>10;10;140;10</additional_attributes></element><element><id>Relation</id><coordinates><x>705</x><y>981</y><w>112</w><h>28</h></coordinates><panel_attributes>lt=&lt;-
+m1= 0..7 display_area</panel_attributes><additional_attributes>10;10;140;10</additional_attributes></element><element><id>Relation</id><coordinates><x>663</x><y>827</y><w>56</w><h>77</h></coordinates><panel_attributes>lt=&lt;-
 m1= 0..* hand
-</panel_attributes><additional_attributes>10;90;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>920</x><y>1090</y><w>290</w><h>110</h></coordinates><panel_attributes>lt=&lt;.
-&lt;&lt;use&gt;&gt;</panel_attributes><additional_attributes>270;90;270;40;10;40;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1100</x><y>920</y><w>210</w><h>80</h></coordinates><panel_attributes>StoreHouse
+</panel_attributes><additional_attributes>10;90;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>691</x><y>827</y><w>203</w><h>77</h></coordinates><panel_attributes>lt=&lt;.
+&lt;&lt;use&gt;&gt;</panel_attributes><additional_attributes>270;90;270;40;10;40;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>817</x><y>708</y><w>147</w><h>56</h></coordinates><panel_attributes>StoreHouse
 --
 
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>780</x><y>1090</y><w>120</w><h>110</h></coordinates><panel_attributes>lt=&lt;-
-m1= 0..* discard_pile</panel_attributes><additional_attributes>10;90;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>940</x><y>950</y><w>180</w><h>40</h></coordinates><panel_attributes>lt=&lt;-
-1 my_store_house</panel_attributes><additional_attributes>160;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1200</x><y>790</y><w>120</w><h>150</h></coordinates><panel_attributes>lt=&lt;-
-m1= 0..12 my_pieces</panel_attributes><additional_attributes>10;10;10;130</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1090</x><y>690</y><w>210</w><h>110</h></coordinates><panel_attributes>&lt;&lt;Abstract&gt;&gt;
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>593</x><y>827</y><w>84</w><h>77</h></coordinates><panel_attributes>lt=&lt;-
+m1= 0..* discard_pile</panel_attributes><additional_attributes>10;90;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>705</x><y>729</y><w>126</w><h>28</h></coordinates><panel_attributes>lt=&lt;-
+1 my_store_house</panel_attributes><additional_attributes>160;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>887</x><y>617</y><w>84</w><h>105</h></coordinates><panel_attributes>lt=&lt;-
+m1= 0..12 my_pieces</panel_attributes><additional_attributes>10;10;10;130</additional_attributes></element><element><id>UMLClass</id><coordinates><x>810</x><y>547</y><w>147</w><h>77</h></coordinates><panel_attributes>&lt;&lt;Abstract&gt;&gt;
 Piece
 --
 
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1090</x><y>460</y><w>210</w><h>150</h></coordinates><panel_attributes>Resource
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>810</x><y>386</y><w>147</w><h>105</h></coordinates><panel_attributes>Resource
 --
  + price : int
  + bonus_value : int 
@@ -55,148 +55,148 @@ Piece
 + type : String
 + color : RGB
 + name : String
---</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>740</x><y>720</y><w>210</w><h>110</h></coordinates><panel_attributes>Colonist
+--</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>565</x><y>568</y><w>147</w><h>77</h></coordinates><panel_attributes>Colonist
 --
 + type : String
 + color : RGB
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1170</x><y>600</y><w>30</w><h>110</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>10;10;10;90</additional_attributes></element><element><id>Relation</id><coordinates><x>940</x><y>770</y><w>170</w><h>30</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>10;10;150;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>150</x><y>450</y><w>190</w><h>190</h></coordinates><panel_attributes>Map
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>866</x><y>484</y><w>21</w><h>77</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>10;10;10;90</additional_attributes></element><element><id>Relation</id><coordinates><x>705</x><y>603</y><w>119</w><h>21</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>10;10;150;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>152</x><y>379</y><w>133</w><h>133</h></coordinates><panel_attributes>Map
 --
  + min_player : int 
  + max_player : int
  + name : String
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>150</x><y>700</y><w>210</w><h>100</h></coordinates><panel_attributes>Province
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>152</x><y>554</y><w>147</w><h>70</h></coordinates><panel_attributes>Province
 --
   + color : RGB
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>240</x><y>630</y><w>130</w><h>90</h></coordinates><panel_attributes>lt=&lt;-
-m1=1..* my_provinces</panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>120</x><y>390</y><w>1320</w><h>400</h></coordinates><panel_attributes>lt=&lt;-
-m1= 1 ResourceBonus</panel_attributes><additional_attributes>1180;100;1300;100;1300;10;10;10;10;380;30;380</additional_attributes></element><element><id>UMLClass</id><coordinates><x>470</x><y>830</y><w>210</w><h>150</h></coordinates><panel_attributes>City
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>215</x><y>505</y><w>91</w><h>63</h></coordinates><panel_attributes>lt=&lt;-
+m1=1..* my_provinces</panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>131</x><y>337</y><w>924</w><h>280</h></coordinates><panel_attributes>lt=&lt;-
+m1= 1 ResourceBonus</panel_attributes><additional_attributes>1180;100;1300;100;1300;10;10;10;10;380;30;380</additional_attributes></element><element><id>UMLClass</id><coordinates><x>376</x><y>645</y><w>147</w><h>105</h></coordinates><panel_attributes>City
 -
  +  roman_char : String
  + x : int
  + y : int
  + z : int
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>240</x><y>790</y><w>250</w><h>110</h></coordinates><panel_attributes>lt=&lt;-
-m1= 1..* my_cities</panel_attributes><additional_attributes>230;80;10;80;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>580</x><y>970</y><w>180</w><h>80</h></coordinates><panel_attributes>lt=-&gt;
-m1= 0..1 house</panel_attributes><additional_attributes>160;50;10;50;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>90</x><y>330</y><w>970</w><h>600</h></coordinates><panel_attributes>lt=&lt;-
-m1= 0..1 	assigned_city_token</panel_attributes><additional_attributes>950;10;10;10;10;580;380;580</additional_attributes></element><element><id>UMLClass</id><coordinates><x>750</x><y>490</y><w>110</w><h>60</h></coordinates><panel_attributes>Line
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>215</x><y>617</y><w>175</w><h>77</h></coordinates><panel_attributes>lt=&lt;-
+m1= 1..* my_cities</panel_attributes><additional_attributes>230;80;10;80;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>453</x><y>743</y><w>126</w><h>56</h></coordinates><panel_attributes>lt=-&gt;
+m1= 0..1 house</panel_attributes><additional_attributes>160;50;10;50;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>110</x><y>295</y><w>679</w><h>420</h></coordinates><panel_attributes>lt=&lt;-
+m1= 0..1 	assigned_city_token</panel_attributes><additional_attributes>950;10;10;10;10;580;380;580</additional_attributes></element><element><id>UMLClass</id><coordinates><x>572</x><y>407</y><w>77</w><h>42</h></coordinates><panel_attributes>Line
 --
  
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>640</x><y>530</y><w>130</w><h>320</h></coordinates><panel_attributes>lt=-
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>495</x><y>435</y><w>91</w><h>224</h></coordinates><panel_attributes>lt=-
 m1= 1..* road_list
-m2= 2 city_list</panel_attributes><additional_attributes>110;10;10;10;10;300</additional_attributes></element><element><id>Relation</id><coordinates><x>600</x><y>440</y><w>440</w><h>350</h></coordinates><panel_attributes>lt=&lt;-
-m1= 0..1</panel_attributes><additional_attributes>350;320;420;320;420;10;10;10;10;50</additional_attributes></element><element><id>UMLClass</id><coordinates><x>500</x><y>200</y><w>110</w><h>70</h></coordinates><panel_attributes>PlayerManager
+m2= 2 city_list</panel_attributes><additional_attributes>110;10;10;10;10;300</additional_attributes></element><element><id>Relation</id><coordinates><x>467</x><y>372</y><w>308</w><h>245</h></coordinates><panel_attributes>lt=&lt;-
+m1= 0..1</panel_attributes><additional_attributes>350;320;420;320;420;10;10;10;10;50</additional_attributes></element><element><id>UMLClass</id><coordinates><x>397</x><y>204</y><w>77</w><h>49</h></coordinates><panel_attributes>PlayerManager
 --
 
---</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>460</x><y>490</y><w>160</w><h>100</h></coordinates><panel_attributes>&lt;&lt;Abstract&gt;&gt;
+--</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>369</x><y>407</y><w>112</w><h>70</h></coordinates><panel_attributes>&lt;&lt;Abstract&gt;&gt;
 Position  
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>610</x><y>500</y><w>160</w><h>30</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>140;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>130</x><y>180</y><w>240</w><h>120</h></coordinates><panel_attributes>GameManager
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>474</x><y>414</y><w>112</w><h>21</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>140;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>138</x><y>190</y><w>168</w><h>84</h></coordinates><panel_attributes>GameManager
 --
  + player_colors : &lt;RGB&gt;
 --
 + initializationScript( info_file : file ): void
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>240</x><y>290</y><w>100</w><h>180</h></coordinates><panel_attributes>lt=&lt;-
-m1= 1 game_map</panel_attributes><additional_attributes>10;160;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>360</x><y>230</y><w>160</w><h>40</h></coordinates><panel_attributes>lt=&lt;-
-m1= 1 game_player</panel_attributes><additional_attributes>140;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>600</x><y>220</y><w>950</w><h>830</h></coordinates><panel_attributes>lt=&lt;.
-&lt;&lt;use&gt;&gt;</panel_attributes><additional_attributes>350;810;900;810;900;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>0</x><y>230</y><w>760</w><h>870</h></coordinates><panel_attributes>lt=&lt;-
-m1=2..*</panel_attributes><additional_attributes>740;840;10;840;10;10;130;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>490</x><y>1500</y><w>200</w><h>90</h></coordinates><panel_attributes>Tribune
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>215</x><y>267</y><w>70</w><h>126</h></coordinates><panel_attributes>lt=&lt;-
+m1= 1 game_map</panel_attributes><additional_attributes>10;160;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>299</x><y>225</y><w>112</w><h>28</h></coordinates><panel_attributes>lt=&lt;-
+m1= 1 game_player</panel_attributes><additional_attributes>140;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>467</x><y>218</y><w>665</w><h>581</h></coordinates><panel_attributes>lt=&lt;.
+&lt;&lt;use&gt;&gt;</panel_attributes><additional_attributes>350;810;900;810;900;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>47</x><y>225</y><w>532</w><h>609</h></coordinates><panel_attributes>lt=&lt;-
+m1=2..*</panel_attributes><additional_attributes>740;840;10;840;10;10;130;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>390</x><y>1114</y><w>140</w><h>63</h></coordinates><panel_attributes>Tribune
 --
  
---</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>730</x><y>1500</y><w>200</w><h>90</h></coordinates><panel_attributes>Architect
+--</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>558</x><y>1114</y><w>140</w><h>63</h></coordinates><panel_attributes>Architect
 --
 
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>970</x><y>1500</y><w>200</w><h>90</h></coordinates><panel_attributes>Prefect
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>726</x><y>1114</y><w>140</w><h>63</h></coordinates><panel_attributes>Prefect
 --
  
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>490</x><y>1610</y><w>200</w><h>90</h></coordinates><panel_attributes>Colonist
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>390</x><y>1191</y><w>140</w><h>63</h></coordinates><panel_attributes>Colonist
 --
 
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>730</x><y>1610</y><w>200</w><h>90</h></coordinates><panel_attributes>Mercator
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>558</x><y>1191</y><w>140</w><h>63</h></coordinates><panel_attributes>Mercator
 --
 
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>970</x><y>1610</y><w>200</w><h>90</h></coordinates><panel_attributes>PrefectusMagnus
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>726</x><y>1191</y><w>140</w><h>63</h></coordinates><panel_attributes>PrefectusMagnus
 --
 
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>490</x><y>1720</y><w>200</w><h>90</h></coordinates><panel_attributes>Diplomat
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>390</x><y>1268</y><w>140</w><h>63</h></coordinates><panel_attributes>Diplomat
 --
 
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>730</x><y>1720</y><w>200</w><h>90</h></coordinates><panel_attributes>Senator
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>558</x><y>1268</y><w>140</w><h>63</h></coordinates><panel_attributes>Senator
 --
 
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>970</x><y>1720</y><w>200</w><h>90</h></coordinates><panel_attributes>Consul
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>726</x><y>1268</y><w>140</w><h>63</h></coordinates><panel_attributes>Consul
 --
 
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1200</x><y>1500</y><w>200</w><h>90</h></coordinates><panel_attributes>Specialist
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>887</x><y>1114</y><w>140</w><h>63</h></coordinates><panel_attributes>Specialist
 --
  + name : Specialist
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>410</x><y>1430</y><w>160</w><h>90</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>140;70;140;40;10;40;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>480</x><y>1420</y><w>370</w><h>100</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>350;80;350;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>480</x><y>1390</y><w>620</w><h>130</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>600;110;600;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>480</x><y>1370</y><w>830</w><h>150</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>810;130;810;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>530</x><y>580</y><w>30</w><h>270</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>10;250;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1040</x><y>270</y><w>210</w><h>110</h></coordinates><panel_attributes>CityToken
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>334</x><y>1065</y><w>112</w><h>63</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>140;70;140;40;10;40;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>383</x><y>1058</y><w>259</w><h>70</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>350;80;350;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>383</x><y>1037</y><w>434</w><h>91</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>600;110;600;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>383</x><y>1023</y><w>581</w><h>105</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>810;130;810;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>418</x><y>470</y><w>21</w><h>189</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>10;250;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>775</x><y>253</y><w>147</w><h>77</h></coordinates><panel_attributes>CityToken
 --
  +  roman_char : String
  + n_copies : int
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1240</x><y>330</y><w>230</w><h>240</h></coordinates><panel_attributes>lt=&lt;-
-m1= 0..1 assigned_resource</panel_attributes><additional_attributes>60;210;210;210;210;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>170</x><y>1510</y><w>200</w><h>90</h></coordinates><panel_attributes>Concordia
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>915</x><y>295</y><w>161</w><h>168</h></coordinates><panel_attributes>lt=&lt;-
+m1= 0..1 assigned_resource</panel_attributes><additional_attributes>60;210;210;210;210;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>166</x><y>1121</y><w>140</w><h>63</h></coordinates><panel_attributes>Concordia
 --
  
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>260</x><y>1380</y><w>70</w><h>150</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>10;130;10;10;50;10</additional_attributes></element><element><id>Relation</id><coordinates><x>850</x><y>820</y><w>130</w><h>110</h></coordinates><panel_attributes>lt=-&gt;
-m2= 0..* my_colonists</panel_attributes><additional_attributes>10;90;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1280</x><y>600</y><w>140</w><h>920</h></coordinates><panel_attributes>lt=&lt;-
-m1= 0..1 used_resource</panel_attributes><additional_attributes>10;10;10;60;80;60;90;900</additional_attributes></element><element><id>Relation</id><coordinates><x>330</x><y>540</y><w>150</w><h>40</h></coordinates><panel_attributes>lt=&lt;-
-m1= 0..* all_positions</panel_attributes><additional_attributes>130;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>840</x><y>570</y><w>130</w><h>100</h></coordinates><panel_attributes>Way
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>229</x><y>1030</y><w>49</w><h>105</h></coordinates><panel_attributes>lt=-&gt;&gt;</panel_attributes><additional_attributes>10;130;10;10;50;10</additional_attributes></element><element><id>Relation</id><coordinates><x>642</x><y>638</y><w>91</w><h>77</h></coordinates><panel_attributes>lt=-&gt;
+m2= 0..* my_colonists</panel_attributes><additional_attributes>10;90;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>943</x><y>484</y><w>98</w><h>644</h></coordinates><panel_attributes>lt=&lt;-
+m1= 0..1 used_resource</panel_attributes><additional_attributes>10;10;10;60;80;60;90;900</additional_attributes></element><element><id>Relation</id><coordinates><x>278</x><y>442</y><w>105</w><h>28</h></coordinates><panel_attributes>lt=&lt;-
+m1= 0..* all_positions</panel_attributes><additional_attributes>130;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>635</x><y>463</y><w>91</w><h>70</h></coordinates><panel_attributes>Way
 --
 + color : RGB
 + max_colonist : int
 + n_colonist : int
 + name : String
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>900</x><y>670</y><w>130</w><h>70</h></coordinates><panel_attributes>lt=-&gt;
-m2= 0..1 colonist_way</panel_attributes><additional_attributes>10;50;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>850</x><y>510</y><w>130</w><h>80</h></coordinates><panel_attributes>lt=&lt;-
-m2= 1 line_way</panel_attributes><additional_attributes>110;60;110;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>140</x><y>1100</y><w>210</w><h>90</h></coordinates><panel_attributes>Numeral
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>677</x><y>533</y><w>91</w><h>49</h></coordinates><panel_attributes>lt=-&gt;
+m2= 0..1 colonist_way</panel_attributes><additional_attributes>10;50;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>642</x><y>421</y><w>91</w><h>56</h></coordinates><panel_attributes>lt=&lt;-
+m2= 1 line_way</panel_attributes><additional_attributes>110;60;110;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>145</x><y>834</y><w>147</w><h>63</h></coordinates><panel_attributes>Numeral
 --
  + value : int
  + roman_number : String
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>340</x><y>1130</y><w>440</w><h>70</h></coordinates><panel_attributes>lt=&lt;-
-0..1 order</panel_attributes><additional_attributes>10;20;420;20;420;50</additional_attributes></element><element><id>UMLClass</id><coordinates><x>200</x><y>50</y><w>110</w><h>70</h></coordinates><panel_attributes>&lt;&lt;file&gt;&gt;
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>285</x><y>855</y><w>308</w><h>49</h></coordinates><panel_attributes>lt=&lt;-
+0..1 order</panel_attributes><additional_attributes>10;20;420;20;420;50</additional_attributes></element><element><id>UMLClass</id><coordinates><x>187</x><y>99</y><w>77</w><h>49</h></coordinates><panel_attributes>&lt;&lt;file&gt;&gt;
 data
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>240</x><y>110</y><w>100</w><h>90</h></coordinates><panel_attributes>lt=&lt;-
-m1= 1 game_data</panel_attributes><additional_attributes>10;10;10;70</additional_attributes></element><element><id>UMLPackage</id><coordinates><x>110</x><y>0</y><w>520</w><h>320</h></coordinates><panel_attributes>Main
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>215</x><y>141</y><w>70</w><h>63</h></coordinates><panel_attributes>lt=&lt;-
+m1= 1 game_data</panel_attributes><additional_attributes>10;10;10;70</additional_attributes></element><element><id>UMLPackage</id><coordinates><x>124</x><y>64</y><w>364</w><h>224</h></coordinates><panel_attributes>Main
 --
-bg=orange</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>110</x><y>360</y><w>600</w><h>690</h></coordinates><panel_attributes>Map
+bg=orange</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>124</x><y>316</y><w>420</w><h>483</h></coordinates><panel_attributes>Map
 --
-bg=green</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>740</x><y>460</y><w>260</w><h>220</h></coordinates><panel_attributes>Map
+bg=green</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>565</x><y>386</y><w>182</w><h>154</h></coordinates><panel_attributes>Map
 --
-bg=green</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1010</x><y>240</y><w>270</w><h>150</h></coordinates><panel_attributes>EmptyPackage
+bg=green</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>754</x><y>232</y><w>189</w><h>105</h></coordinates><panel_attributes>EmptyPackage
 --
-bg=green</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1070</x><y>430</y><w>280</w><h>400</h></coordinates><panel_attributes>Piece
+bg=green</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>796</x><y>365</y><w>196</w><h>280</h></coordinates><panel_attributes>Piece
 --
-bg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>720</x><y>690</y><w>280</w><h>160</h></coordinates><panel_attributes>Piece
+bg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>551</x><y>547</y><w>196</w><h>112</h></coordinates><panel_attributes>Piece
 --
-bg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>730</x><y>880</y><w>610</w><h>230</h></coordinates><panel_attributes>Player
+bg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>558</x><y>680</y><w>427</w><h>161</h></coordinates><panel_attributes>Player
 --
-bg=red</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>130</x><y>1070</y><w>230</w><h>130</h></coordinates><panel_attributes>Card
+bg=red</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>138</x><y>813</y><w>161</w><h>91</h></coordinates><panel_attributes>Card
 --
-bg=yellow</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>720</x><y>1110</y><w>590</w><h>330</h></coordinates><panel_attributes>Card
+bg=yellow</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>551</x><y>841</y><w>413</w><h>231</h></coordinates><panel_attributes>Card
 --
-bg=yellow</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>140</x><y>1460</y><w>1280</w><h>390</h></coordinates><panel_attributes>Personality
+bg=yellow</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>145</x><y>1086</y><w>896</w><h>273</h></coordinates><panel_attributes>Personality
 --
-bg=magenta</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>410</x><y>1150</y><w>270</w><h>160</h></coordinates><panel_attributes>Card
+bg=magenta</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>334</x><y>869</y><w>189</w><h>112</h></coordinates><panel_attributes>Card
 --
-bg=yellow</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>300</x><y>1290</y><w>220</w><h>160</h></coordinates><panel_attributes>Personality
+bg=yellow</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLPackage</id><coordinates><x>257</x><y>967</y><w>154</w><h>112</h></coordinates><panel_attributes>Personality
 --
 bg=magenta</panel_attributes><additional_attributes></additional_attributes></element></diagram>

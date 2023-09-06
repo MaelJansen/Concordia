@@ -4,12 +4,30 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import ImageTk, Image
 from screeninfo import get_monitors
-from Player import Player
-from Map import Map
+#import Players
+import Map
 from typing import Type
 import oracledb
 
 class GameManager:
+    """
+    A class to control the game 
+
+    ...
+
+    Attributes
+    ----------
+    player_controller : PlayerManager
+    game_map : Map
+    player_list : List<Player>
+    player_color : List<Tuple()>
+
+    Methods
+    -------
+    initialization_script()
+        The method to setup the game
+
+    """
     def __init__(self):
         self.player_controller = None
         self.game_map = None
