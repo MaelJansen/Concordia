@@ -31,8 +31,18 @@ class GameManager:
     def __init__(self):
         self.player_controller = None
         self.game_map = None
-        self.player_list = ()
-        self.initialization_script()
+        self.player_list = []  
+        self.current_player_index = 0  # Index of the current player
+        self.connection = oracledb.connect(
+            user="ETD",
+            password="ETD",
+            host="info-atchoum.iut.bx",
+            port=1521,
+            sid="IUT12c"
+        )
+        self.cursor = self.connection.cursor()
+        
+        self.get_player_setup_data()
 
     def initialization_script(self):
         self.createInterface()
@@ -42,6 +52,114 @@ class GameManager:
         concordia_screen = Screen(root)
         root.mainloop() 
 
+    def start_game(self):
+        # Initialize the game, set up the map, create players, etc.
+        self.game_map = Map()  # Replace with actual map initialization
+        self.create_players()  # Create players here
+        self.setup_players()
+
+        # Start the first player's turn
+        self.start_next_player_turn()
+
+    def create_players(self):
+        num_players = len(self.player_list)
+        if num_players < 2:
+            print("At least two players are required to start the game.")
+            return
+
+        for player_num in range(num_players):
+            player_name = f"Player {player_num + 1}"
+            self.player_list.append(Players.Player(player_name))  # Replace with actual player creation
+
+    def setup_players(self):
+        # Use SQL queries to get player setup data here
+        player_setup_data = self.get_player_setup_data()
+
+        # Assign player setup data to each player
+        for player_num, setup_data in enumerate(player_setup_data):
+            current_player = self.player_list[player_num]
+
+            # Extract colonists setup data
+            colonist_data = setup_data.get("colonists", {})
+            current_player.setup_colonists(colonist_data)
+
+            # Extract goods setup data
+            goods_data = setup_data.get("goods", {})
+            current_player.setup_goods(goods_data)
+
+            # Extract houses setup data
+            houses_data = setup_data.get("houses", 0)
+            current_player.setup_houses(houses_data)
+
+            # Extract player setup cards data
+            cards_data = setup_data.get("cards", {})
+            current_player.setup_cards(cards_data)
+
+            # Extract sestertii setup data
+            sestertii_data = setup_data.get("sestertii", {})
+            current_player.setup_sestertii(sestertii_data)
+
+    def get_player_setup_data(self):
+        # Implement SQL queries to retrieve player setup data
+        # Execute the SQL queries and retrieve the data
+        sql_query_colonists = f"""SELECT spc.setup_p_colon_way,
+                            spc.setup_p_colon_n_colonists,
+                            spc.setup_p_colon_n_colonists_cap
+                            FROM T_Concordia t, table(t.concordia_setup_player.setup_p_colonist) spc"""
+        
+        self.cursor.execute(sql_query_colonists)
+        colonists_data=[]
+        for row in self.cursor:
+            temp_colonists_data = [row[0], row[1], row[2]]
+            colonists_data.append(temp_colonists_data)
+        
+        print(colonists_data)
+
+        sql_query_goods = f"""SELECT spg.setup_p_good_good ,
+                            spg.setup_p_good_n_goods
+                            FROM T_Concordia t, table(t.concordia_setup_player.setup_p_good) spg"""
+        
+        self.cursor.execute(sql_query_goods)
+        goods_data=[]
+        for row in self.cursor:
+            temp_goods_data = [row[0], row[1]]
+            goods_data.append(temp_goods_data)
+        
+        print(goods_data)
+
+        sql_query_cards = f"""SELECT spc.setup_p_card_card ,
+                            spc.setup_p_card_n_copies
+                            FROM T_Concordia t, table(t.concordia_setup_player.setup_p_card) spc """
+        
+
+        # Example data (replace with actual data)
+        player_setup_data = [
+            {
+                "colonists": {"way": "some_way", "n_colonists": 5, "n_colonists_cap": 10},
+                "goods": {"good": "some_good", "n_goods": 20},
+                "houses": 3,
+                "cards": {"card": "some_card", "n_copies": 2},
+                "sestertii": {"order_of_play": 1, "n_sestertii": 50, "n_sestertii_variant": 100},
+            },
+            # Add data for other players here
+        ]
+
+        return player_setup_data
+
+    def start_next_player_turn(self):
+        # Get the current player
+        current_player = self.player_list[self.current_player_index]
+
+        # Start the player's turn (you need to implement this in PlayerController)
+        self.player_controller.start_player_turn(current_player)
+
+        # Increment the current player index
+        self.current_player_index = (self.current_player_index + 1) % len(self.player_list)
+
+    def end_game(self):
+        # End the game, calculate scores, display results, etc.
+        pass
+   
 class PlayerController:
     pass
 
@@ -64,19 +182,9 @@ class Screen:
         self.capital: Tuple[str, int, int]
         self.cities: List[Tuple[str, int, int]] = []
         self.roads: Set[Tuple[Tuple[str, int, int], Tuple[str, int, int], str]] = []
-        
-        self.connection = oracledb.connect(
-            user="ETD",
-            password="ETD",
-            host="localhost",
-            port=1521,
-            sid="IUT12c"
-        )
-        self.cursor = self.connection.cursor()
 
         self.create_game()
         
-        self.cursor.close()
 
     def charge_map(self):
         """This method uses SQL resquests to get the capital, the cities and the ways of the map that have been choosed by the player to place them in list. The lists
