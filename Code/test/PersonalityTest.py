@@ -113,25 +113,37 @@ class ArchitectTest(unittest.TestCase):
         self.assertEqual(player3.house, 1)
 
 
-class Colonist_Test:
+class Colonist_Test(unittest.TestCase):
 
     def test_colonist(self):
-        player: Player = Player(0, 0, (12, 14, 15))
-        city: City = City("I", (12, 14, 15))
+        test_food = Resource(2, 1, "food", 1, "yellow", "food")
+        test_tool = Resource(2, 1, "tool", 1, "blue", "tool")
 
-        city.add_house(player)
+        player: Player = Player()
+        city_token: CityToken = CityToken()
+        city: City = City(city_token)
 
-        player.my_store_house = ({"wheat": 1, "tools": 1})
+        colonist_test: Colonist_ = Colonist_(player)
+
+        player.my_houses.append(city)
+
+        player.my_store_house.my_pieces.append(test_food)
+        player.my_store_house.my_pieces.append(test_tool)
 
         colonist_count: int = 2
         for _ in range(colonist_count):
-            colonist: Colonist = Colonist("Colonist", "Colonist", None)
-            player.add_card(colonist)
+            colonist: Colonist = Colonist("ground", "blue")
+            player.my_colonist.append(colonist)
 
-        colonist.personality_action()
+        test_colonist: Colonist = Colonist("ground", "blue")
+
+        colonist_test.personality_action(False)
 
         expected_sesterces: int = 5 + colonist_count
-        self.assertEqual(player.get_sesterces(), expected_sesterces)
+        self.assertEqual(player.money, expected_sesterces)
+
+        colonist_test.personality_action(True,test_colonist)
+        self.assertTrue(test_colonist in player.my_colonist)
 
 
 class ConcordiaTest:
@@ -210,21 +222,22 @@ class PrefectusMagnusTest:
     pass
 
 
-class SenatorTest:
+class SenatorTest(unittest.TestCase):
     def test_senator(self):
-        senator: Senator = Senator()
-
         player: Player = Player()
+        senator: Senator = Senator(player)
 
         card1: Card = Card()
         card2: Card = Card()
 
         marketplace: MarketPlace = MarketPlace()
+        marketplace.display_area.append(card1)
+        marketplace.display_area.append(card2)
 
-        senator.personality_action(player, card1, card2)
+        senator.personality_action(card1, card2, marketplace)
 
-        self.assertIn(card1, player.discard_pile)
-        self.assertIn(card2, player.discard_pile)
+        self.assertIn(card1, player.hand)
+        self.assertIn(card2, player.hand)
 
         self.assertNotIn(card1, marketplace.display_area)
         self.assertNotIn(card2, marketplace.display_area)
@@ -271,5 +284,59 @@ class SpecialistTest(unittest.TestCase):
         self.assertEqual(len(player.my_store_house.my_pieces),1)
 
 
-class TribuneTest:
-    pass
+class TribuneTest(unittest.TestCase):
+
+    def test_tribune(self):
+        test_food = Resource(2, 1, "food", 1, "yellow", "food")
+
+        player: Player = Player()
+        specialist: Specialist = Specialist(player, test_food)
+        player.discard_pile.append(specialist)
+
+        tribune_test: Tribune = Tribune(player)
+        player.hand.append(tribune_test)
+
+        self.assertFalse(specialist in player.hand)
+        self.assertTrue(tribune_test in player.hand)
+        self.assertEqual(len(player.discard_pile),1)
+
+        tribune_test.personality_action(None)
+
+        self.assertEqual(len(player.discard_pile), 0)
+        self.assertEqual(len(player.hand), 2)
+        self.assertEqual(player.money, 0,f"{player.money} != 0")
+        self.assertTrue(specialist in player.hand)
+        self.assertTrue(tribune_test in player.hand)
+        pass
+
+    def test_tribune2(self):
+        test_food = Resource(2, 1, "food", 1, "yellow", "food")
+        test_tool = Resource(2,1,"tool",1,"grey","tool")
+
+        player: Player = Player()
+        specialist: Specialist = Specialist(player, test_food)
+        player.discard_pile.append(specialist)
+
+        player.my_store_house.my_pieces.append(test_food)
+
+        colonist_test: Colonist = Colonist("ground","blue")
+
+        tribune_test: Tribune = Tribune(player)
+        player.hand.append(tribune_test)
+
+        self.assertFalse(specialist in player.hand)
+        self.assertTrue(tribune_test in player.hand)
+        self.assertEqual(len(player.discard_pile), 1)
+
+        tribune_test.personality_action(colonist_test)
+
+        self.assertFalse(colonist_test in player.my_colonist)
+        self.assertTrue(test_food in player.my_store_house.my_pieces)
+
+        player.my_store_house.my_pieces.append(test_tool)
+        tribune_test.personality_action(colonist_test)
+
+        self.assertTrue(colonist_test in player.my_colonist)
+        self.assertFalse(test_food in player.my_store_house.my_pieces)
+        self.assertFalse(test_tool in player.my_store_house.my_pieces)
+        pass

@@ -144,8 +144,8 @@ class MarketPlace:
 
     """
     def __init__(self):
-        self.stack = ()
-        self.display_area = ()
+        self.stack = []
+        self.display_area = []
 
 class Numeral:
     """

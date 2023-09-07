@@ -1,5 +1,6 @@
+import copy
 from abc import ABC, abstractmethod
-from .Pieces import Resource
+from .Pieces import Resource, Colonist
 from .Map import City
 
 
@@ -28,6 +29,8 @@ class Personality(ABC):
         return a_resource and a_brick
 
     def could_pay(self, *resources):
+        if len(resources) == 1:
+            resources = resources[0]
         for resource in resources:
             if resource not in self.player.my_store_house.my_pieces:
                 return False
@@ -57,13 +60,23 @@ class Personality(ABC):
             self.player.my_store_house.my_pieces = payment_pieces
 
     def pay_with_resource(self, *resources):
+        if len(resources) == 1:
+            resources = resources[0]
         for resource in resources:
             self.player.my_store_house.my_pieces.remove(resource)
+
+    def could_pay_with_name(self,*name_resource):
+        resources = self.player.my_store_house.my_pieces.copy()
+        i = 0
+        for resource in resources:
+            if resource.name in name_resource:
+                i += 1
+        return i == len(name_resource)
 
     def pay_with_resource_by_name(self, *name_resource):
         resources = self.player.my_store_house.my_pieces.copy()
         for resource in resources:
-            if name_resource.__contains__(resource.name):
+            if resource.name in name_resource:
                 self.player.my_store_house.my_pieces.remove(resource)
 
     @abstractmethod
@@ -155,12 +168,14 @@ class Colonist_(Personality):
     def __init__(self, p: object):
         super().__init__(p)
 
-    def personality_action(self):
+    def personality_action(self, choice_add_colonist, *colonists: Colonist):
         # We need to ask the player what he wants to do
-        choice_add_colon = True
-        if choice_add_colon:
+        if choice_add_colonist:
             # A function who can demand what colons to add
-            self.player.add_colons()
+            for colonist in colonists:
+                if self.could_pay_with_name("food","tool"):
+                    self.pay_with_resource_by_name("food", "tool")
+                    self.player.my_colonist.append(colonist)
         else:
             self.player.money += 5 + len(self.player.my_colonist)
 
@@ -388,14 +403,17 @@ class Senator(Personality):
     def __init__(self, p: object):
         super().__init__(p)
 
-    def personality_action(self):
-        card_choose_1, card_choose_2 = self.game.choose_cards_market()
+    def personality_action(self, card_choose_1, card_choose_2, marketplace):
         if card_choose_1 is not None:
             if self.could_pay(card_choose_1.card_cost):
                 self.pay_with_resource(card_choose_1.card_cost)
+                self.player.hand.append(card_choose_1)
+                marketplace.display_area.remove(card_choose_1)
         if card_choose_2 is not None:
             if self.could_pay(card_choose_2.card_cost):
                 self.pay_with_resource(card_choose_2.card_cost)
+                self.player.hand.append(card_choose_2)
+                marketplace.display_area.remove(card_choose_2)
         pass
 
 
@@ -446,13 +464,16 @@ class Tribune(Personality):
     def __init__(self, p: object):
         super().__init__(p)
 
-    def personality_action(self):
+    def personality_action(self, selected_colonist: object):
         # take all card of our discard + return the number of card won
-        nb_cards_added = self.player.discard_pile.__sizeof__()
+        nb_cards_added = len(self.player.discard_pile) + 1
+        save = copy.copy(self.player.discard_pile)
         for card in self.player.discard_pile:
             self.player.hand.append(card)
+            self.player.discard_pile.remove(card)
         money_earned = nb_cards_added - 3
         if money_earned > 0:
             self.player.money += money_earned
-        selected_colonist = self.game.choose_colonist()
-        self.player.my_colonist.append(selected_colonist)
+        if selected_colonist is not None and self.could_pay_with_name("food","tool"):
+            self.player.my_colonist.append(selected_colonist)
+            self.pay_with_resource_by_name("food", "tool")
