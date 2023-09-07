@@ -79,7 +79,8 @@ class ResourceType:
     """
     # static
     RESOURCE_TYPES : typing.Dict[str,object] = {}
-    def __init__(self, resource_price, resource_bonus_value, build_cost, resource_color):
+    def __init__(self, name:typing.Text, resource_price, resource_bonus_value, build_cost, resource_color):
+        self.name = name 
         self.price = resource_price
         self.bonus_value = resource_bonus_value
         self.build_cost = build_cost
@@ -93,7 +94,10 @@ class ResourceType:
         return info
     
     def setup_resource_types(data):
-        pass
+        for r_t in data:
+            resource_name, resource_price, resource_color, resource_bonus_value, build_cost= r_t[0],r_t[1], r_t[2],r_t[3],r_t[4]
+            res_type_obj = ResourceType(resource_name,resource_price,resource_bonus_value,build_cost, resource_color)
+            ResourceType.RESOURCE_TYPES[resource_name] = res_type_obj
 
 class Resource(Piece):
     def __init__(self, res_type: typing.Type[ResourceType]):

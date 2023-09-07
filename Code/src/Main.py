@@ -10,6 +10,7 @@ import Cards
 import Map
 from typing import Type
 import oracledb
+import Pieces
 
 
 class GameManager:
@@ -160,7 +161,8 @@ class GameManager:
         for row in self.cursor:
             temp_goods_data = [row[0], row[1], row[2], row[3], row[4]]
             goods_data.append(temp_goods_data)
-        print(goods_data)
+        Pieces.ResourceType.setup_resource_types(goods_data)
+
 
 
     def start_next_player_turn(self):
