@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-import typing
-
+#from Piece import Ressource
 
 class Map:
     """
@@ -20,14 +19,12 @@ class Map:
     -------
 
     """
-
-    def __init__(self, min_player, map_player):
-        self.name = None
+    def __init__(self, name, min_player, max_player):
+        self.name = name
         self.min_player = min_player
-        self.map_player = map_player
+        self.max_player = max_player
         self.my_provinces = []
         self.all_positions = Position()
-
 
 class Province:
     """
@@ -45,13 +42,11 @@ class Province:
     -------
 
     """
-
     def __init__(self, my_ressource_bonus):
         self.color = ()
         self.my_cities = City()
         self.ressource_bonus = my_ressource_bonus
         self.side_resource_bonus = True
-
 
 class Position(ABC):
     """
@@ -66,10 +61,8 @@ class Position(ABC):
     -------
 
     """
-
     def __init__(self):
         pass
-
 
 class City(Position):
     """
@@ -90,16 +83,15 @@ class City(Position):
     -------
 
     """
-
-    def __init__(self, my_assigned_city_token=None):
+    def __init__(self, my_assigned_city_token, myName, myX, myY):
         super().__init__()
         self.road_list = ()
         self.assigned_city_token = my_assigned_city_token
+        self.name = myName
         self.roman_char = None
-        self.x = None
-        self.y = None
+        self.x = myX
+        self.y = myY
         self.z = None
-
 
 class CityToken:
     """
@@ -117,12 +109,10 @@ class CityToken:
     -------
 
     """
-
-    def __init__(self, roman_char: typing.Text, n_copies: int, assigned_resource: object):
-        self.roman_char = roman_char
-        self.n_copies = n_copies
-        self.assigned_resource = assigned_resource
-
+    def __init__(self):
+        self.roman_char = None
+        self.n_copies = None
+        self.assigned_resource = None
 
 class Line(Position):
     """
@@ -138,12 +128,10 @@ class Line(Position):
     -------
 
     """
-
-    def __init__(self):
+    def __init__(self, firstCity, secondCity, myWayName):
         super().__init__()
-        self.city_list = ()
-        self.line_way = Way()
-
+        self.city_list = (firstCity, secondCity)
+        self.line_way = Way(myWayName)
 
 class Way:
     """
@@ -164,18 +152,15 @@ class Way:
         Checks if the move is valid for the given colonist.
 
     """
-
-    def __init__(self, color, max_colonist, n_colonist, name):
-        self.color = color
-        self.max_colonist = max_colonist
-        self.n_colonist = n_colonist
+    def __init__(self, name):
         self.name = name
+        self.occupant = None
 
     def is_valid_move_for_colonist(self, colonist):
         if self.occupant is not None:
             return False
-
+        
         if colonist.type != self.name:
             return False
-
+        
         return True

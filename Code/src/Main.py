@@ -8,18 +8,14 @@ from screeninfo import get_monitors
 import Players
 import Cards
 import Map
-from typing import Type, List
+from typing import Type
 import oracledb
-import Map
 import Pieces
-import typing
-import random
-from Map import City
 
 
 class GameManager:
     """
-    A singleton class to control the game 
+    A class to control the game 
 
     ...
 
@@ -33,7 +29,7 @@ class GameManager:
     List : [Tuple[str, int, int]]
     cities : List[Tuple[str, int, int]]
     roads : Set[Tuple[Tuple[str, int, int], Tuple[str, int, int], str]]
-
+    
 
     Methods
     -------
@@ -43,21 +39,21 @@ class GameManager:
     """
 
     def __init__(self):
-        """To make this class represent a singleton, the constructor should be private
-        """
         self.player_controller = None
         self.game_map = None
-        self.player_list = []
+        self.player_list = []  
         self.current_player_index = 0  # Index of the current player
         self.connection = oracledb.connect(
             user="ETD",
             password="ETD",
-            host="localhost",
+            host="info-atchoum.iut.bx",
             port=1521,
             sid="IUT12c"
         )
         self.cursor = self.connection.cursor()
-        self.get_player_setup_data()
+        
+        #self.start_game()
+        self.get_resource_setup_data()
 
     def initialization_script(self):
         self.createInterface()
@@ -69,25 +65,23 @@ class GameManager:
 
     def start_game(self):
         # Initialize the game, set up the map, create players, etc.
-        # self.game_map = Map()  # To be Replaced with actual map initialization
+        #self.game_map = Map()  # To be Replaced with actual map initialization
         self.create_players(2)  # Create players here
         self.setup_players()
 
         # Start the first player's turn
         self.start_next_player_turn()
 
-    def create_players(self, num_players: int):
+    def create_players(self, num_players:int):
         for player_num in range(num_players):
-            player_name = f"Player {player_num + 1}"
-            # Replace with actual player creation
-            self.player_list.append(Players.Player())
+            self.player_list.append(Players.Player())  # Replace with actual player creation
 
     def setup_players(self):
         # Use SQL queries to get player setup data here
         player_setup_data = self.get_player_setup_data()
 
         # Assign player setup data to each player
-        for player_num in range(0, len(self.player_list)):
+        for player_num in range (0,len(self.player_list)):
             current_player = self.player_list[player_num]
 
             colonist_data = player_setup_data[0]
@@ -111,9 +105,9 @@ class GameManager:
                             spc.setup_p_colon_n_colonists,
                             spc.setup_p_colon_n_colonists_cap
                             FROM T_Concordia t, table(t.concordia_setup_player.setup_p_colonist) spc"""
-
+        
         self.cursor.execute(sql_query_colonists)
-        colonists_data = []
+        colonists_data=[]
         for row in self.cursor:
             temp_colonists_data = [row[0], row[1], row[2]]
             colonists_data.append(temp_colonists_data)
@@ -121,9 +115,9 @@ class GameManager:
         sql_query_goods = f"""SELECT spg.setup_p_good_good ,
                             spg.setup_p_good_n_goods
                             FROM T_Concordia t, table(t.concordia_setup_player.setup_p_good) spg"""
-
+        
         self.cursor.execute(sql_query_goods)
-        goods_data = []
+        goods_data=[]
         for row in self.cursor:
             temp_goods_data = [row[0], row[1]]
             goods_data.append(temp_goods_data)
@@ -149,16 +143,16 @@ class GameManager:
                                 sps.setup_p_se_n_sestertii ,
                                 sps.setup_p_se_n_sestertii_variant
                                 FROM T_Concordia t, table(t.concordia_setup_player.setup_p_sestertius) sps"""
-
+        
         self.cursor.execute(sql_query_sestertii)
         sestertii_data = []
         for row in self.cursor:
             temp_sestersii_data = [row[0], row[1], row[2]]
             sestertii_data.append(temp_sestersii_data)
 
-        all_player_data = colonists_data, goods_data, houses_data, cards_data, sestertii_data
+        all_player_data= colonists_data, goods_data, houses_data, cards_data, sestertii_data
         return all_player_data
-
+    
     def get_resource_setup_data(self):
         sql_query_goods = f"""SELECT t.good_name name,
                                 t.good_value value,
@@ -166,56 +160,15 @@ class GameManager:
                                 good_n_sestertii_bonus_marker n_sestertii_bonus_marker,
                                 good_n_sestertii_build_cost n_sestertii_build_cost
                                 FROM T_Concordia, TABLE(T_Concordia.concordia_good) t"""
-
+        
         self.cursor.execute(sql_query_goods)
-        goods_data = []
+        goods_data=[]
         for row in self.cursor:
             temp_goods_data = [row[0], row[1], row[2], row[3], row[4]]
             goods_data.append(temp_goods_data)
         Pieces.ResourceType.setup_resource_types(goods_data)
 
-    def setup_city_token_distribution(self):
-        """Setting up the distribution of the city tokens
-        """
-        # Getting the city token data from the database
-        city_token_data: List = self.get_city_token_distribution_setup_data()
-        # City token attribution
-        for city_token_elem in city_token_data:
-            nb_copies = city_token_elem[2]
-            res_type: str = city_token_elem[1]
 
-            # Creating the city token object
-            token: typing.Text = city_token_elem[0]
-            city_token: Map.CityToken = Map.CityToken(token, nb_copies, Pieces.Resource(
-                Pieces.ResourceType.RESOURCE_TYPES[res_type]))
-            # Getting the cities which still have not a token assigned to themselves
-            concerned_cities: typing.List[Map.City] = self.get_cities_without_tokens(
-                token)
-            random.shuffle(concerned_cities)
-            # Attributing the city tokens
-            for i in range(nb_copies):
-                concerned_cities[i].assigned_city_token = city_token
-
-    def get_cities_without_tokens(self, token: typing.Text):
-        cities = []
-        for province in GameManager.game_manager.game_map.my_provinces():
-            province_cities = list(filter(
-                lambda city: city.token == None and city.roman_char == token), province.my_cities)
-            cities += province_cities
-        return cities
-
-    def get_city_token_distribution_setup_data(self) -> List[Tuple]:
-        """Getting data to set up the city token distribution
-        """
-        sql_req = "SELECT t.* FROM T_Concordia, TABLE(T_Concordia.concordia_city_token) t"
-
-        self.cursor.execute(sql_req)
-
-        data = []
-        for row in self.cursor:
-            data.append(row)
-
-        return data
 
     def start_next_player_turn(self):
         # Get the current player
@@ -225,14 +178,12 @@ class GameManager:
         self.player_controller.start_player_turn(current_player)
 
         # Increment the current player index
-        self.current_player_index = (
-            self.current_player_index + 1) % len(self.player_list)
+        self.current_player_index = (self.current_player_index + 1) % len(self.player_list)
 
     def end_game(self):
         # End the game, calculate scores, display results, etc.
         pass
-
-
+   
 class PlayerController:
     def play(self, player: object, card: Cards.Card):
         """Play a card of a player
@@ -266,10 +217,10 @@ class Screen:
         self.map_button: List[tk.Button]
         self.capital: Tuple[str, int, int]
         self.cities: List[Tuple[str, int, int]] = []
-        self.roads: Set[Tuple[Tuple[str, int, int],
-                              Tuple[str, int, int], str]] = []
+        self.roads: Set[Tuple[Tuple[str, int, int], Tuple[str, int, int], str]] = []
 
         self.create_game()
+        
 
     def initialization_script(self):
         self.createInterface()
@@ -278,22 +229,24 @@ class Screen:
         root = tk.Tk()
         concordia_screen = Screen(root, self)
         root.mainloop()
-
+        
     def calculate_victory_points(self):
-        vps = {}
+        vps = {} 
 
         for player in self.player_list:
             total_vps: int = 0
-
+            player = Type[Player](player)
+            
+            if player.peaceful_end:
+                total_vps += 7
+            
             cash_money: int = player.money
-            goods_value: int = sum(
-                goods_price * quantity for goods_price, quantity in player.storehouse.items())
-            total_cash_value: int = cash_money + goods_value
+            goods_value: int = sum(goods_price * quantity for goods_price, quantity in player.storehouse.items())
+            total_cash_value: int= cash_money + goods_value
             vps_vesta: int = total_cash_value // 10
             total_vps += vps_vesta
 
-            non_brick_cities = [
-                house for house in player.my_houses if house.assigned_city_token.assigned_ressource != "brick"]
+            non_brick_cities = [house for house in player.my_houses if house.assigned_city_token.assigned_ressource != "brick"]
             total_vps += len(non_brick_cities)
 
             produced_resources = set()
@@ -324,7 +277,7 @@ class Screen:
             player.n_point = total_vps
 
         return vps
-
+    
     def charge_map(self):
         """This method uses SQL resquests to get the capital, the cities and the ways of the map that have been choosed by the player to place them in list. The lists
         will be used to display the city, ways... on the map. 
@@ -335,7 +288,7 @@ class Screen:
         self.cursor.execute(sql_query_capital)
         for row in self.cursor:
             self.capital = City(CityToken(), row[0], row[1], row[2])
-
+            
         sql_query_cities = f"""SELECT c.CITY_NAME as city_name,
                             c.CITY_COORDINATES.X as x,
                             c.CITY_COORDINATES.Y as y
@@ -343,7 +296,6 @@ class Screen:
                             WHERE t.map_name='{self.game_map.name}'"""
         self.cursor.execute(sql_query_cities)
         for city in self.cursor:
-            print(city)
             temp_city = City(CityToken(), city[0], city[1], city[2])
             self.cities.append(temp_city)
 
@@ -360,26 +312,54 @@ class Screen:
             first_city_capital: bool = False
             second_city_capital: bool = False
             for city in self.cities:
-                if (city.name == first_city):
+                if(city.name == first_city):
                     indice_first_city = index
-                elif (city.name == second_city):
+                elif(city.name == second_city):
                     indice_second_city = index
-                elif (self.capital.name == first_city):
+                elif(self.capital.name == first_city):
                     first_city_capital = True
-                elif (self.capital.name == second_city):
+                elif(self.capital.name == second_city):
                     second_city_capital = True
                 index = index + 1
-            if (first_city_capital):
-                self.roads.append(
-                    Line(self.capital, self.cities[indice_second_city], line[2]))
-            elif (second_city_capital):
-                self.roads.append(
-                    Line(self.cities[indice_first_city], self.capital, line[2]))
+            if(first_city_capital):
+                self.roads.append(Line(self.capital, self.cities[indice_second_city], line[2]))
+            elif(second_city_capital):
+                self.roads.append(Line(self.cities[indice_first_city], self.capital, line[2]))
             else:
-                self.roads.append(
-                    [self.cities[indice_first_city], self.cities[indice_second_city], line[2]])
+                self.roads.append(Line(self.cities[indice_first_city], self.cities[indice_second_city], line[2]))
 
-        self.cursor.close()
+
+
+class PlayerController:
+    def play(self, player: Players.Player, card: Cards.Card):
+        """Play a card of a player
+
+        Args:
+        player (Player) : The player who play
+        card (Card) : The card playing
+        """
+        player.play_card(self,card)
+    
+class PlayerController:
+    pass
+
+class Screen:
+    """This class create the display of the game (main menu, gameplay...)
+    """
+    def __init__(self, root: tk.Tk, game_manager: GameManager):
+        """Initialize an instance of the screen class.
+
+        Args:
+        root (tk.Tk): An instance of the main application window.
+        """
+        self.game_manager = game_manager
+        self.root: tk.Tk = root
+        self.player_number: int = 0
+        self.ai_number: int = 0
+        self.ai_difficulty: str = ""
+        self.maps: list[str] = []
+        self.map_button: List[tk.Button]
+        self.create_game()
 
     def create_game(self):
         """Create the main menu screen, the player is able to choose the map with that screen
@@ -393,27 +373,21 @@ class Screen:
         self.ai_difficulty = None
 
         image: Image.Image = Image.open("Code/src/Images/fond.png")
-        image = image.resize(
-            (dimensions.width, dimensions.height), Image.LANCZOS)
+        image = image.resize((dimensions.width, dimensions.height), Image.LANCZOS)
         self.photo = ImageTk.PhotoImage(image)
 
         label: tk.Label = tk.Label(self.root, image=self.photo)
         label.place(x=0, y=0, relwidth=1, relheight=1)
 
-        self.imperium_button = tk.Button(self.root, text="Imperium", command=lambda: self.player_configuration(
-            "Imperium", 2, 5), font=("Helvetica", 24))
-        self.imperium_button.place(
-            x=dimensions.width // 2 - 150, y=dimensions.height // 2 - 60, width=300, height=120)
-        self.italy_button = tk.Button(self.root, text="Italia", command=lambda: self.player_configuration(
-            "Italia", 2, 4), font=("Helvetica", 24))
-        self.italy_button.place(x=dimensions.width // 2 - 150,
-                                y=dimensions.height // 2 + 100, width=300, height=120)
-        self.italy_button = tk.Button(self.root, text="Europe", command=lambda: self.player_configuration(
-            "EU", 2, 4), font=("Helvetica", 24))
-        self.italy_button.place(x=dimensions.width // 2 - 150,
-                                y=dimensions.height // 2 + 260, width=300, height=120)
+        self.imperium_button = tk.Button(self.root, text="Imperium", command=lambda: self.player_configuration("Imperium", 2, 5), font=("Helvetica", 24))
+        self.imperium_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 - 60, width=300, height=120)
+        self.italy_button = tk.Button(self.root, text="Italia", command=lambda: self.player_configuration("Italia", 2, 4), font=("Helvetica", 24))
+        self.italy_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 + 100, width=300, height=120)
+        self.italy_button = tk.Button(self.root, text="Europe", command=lambda: self.player_configuration("EU", 2, 4), font=("Helvetica", 24))
+        self.italy_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 + 260, width=300, height=120)
 
-    def player_configuration(self, name: str, min_player: int, max_players: int):
+
+    def player_configuration(self, name: str, min_player:int, max_players: int):
         """The popup that permit to the player to chose the number of players (need to get the min player and max player from SQL Request ToDo)
 
         Args:
@@ -437,24 +411,19 @@ class Screen:
         x_coordinate: int = int((dimensions.width - windows_width) // 2)
         y_coordinate: int = int((dimensions.height - windows_height) // 2)
 
-        windows.geometry(
-            f"{windows_width}x{windows_height}+{x_coordinate}+{y_coordinate}")
+        windows.geometry(f"{windows_width}x{windows_height}+{x_coordinate}+{y_coordinate}")
 
-        player_number_label: tk.Label = tk.Label(
-            windows, text="Choose the number of players :")
+        player_number_label: tk.Label = tk.Label(windows, text="Choose the number of players :")
         player_number_label.pack()
 
-        player_number_box: ttk.Combobox = ttk.Combobox(
-            windows, values=[str(i) for i in range(max_players + 1)])
+        player_number_box:ttk.Combobox = ttk.Combobox(windows, values=[str(i) for i in range(self.game_manager.game_map.max_player + 1)])
         player_number_box.set("0")
         player_number_box.pack(padx=20, pady=10)
 
-        bouton: tk.Button = tk.Button(windows, text="Validate", command=lambda: self.ai_configuration(
-            player_number_box.get(), max_players, windows))
+        bouton:tk.Button = tk.Button(windows, text="Validate", command=lambda: self.ai_configuration(player_number_box.get(), windows))
         bouton.pack(pady=10)
 
-        windows.protocol("WM_DELETE_WINDOW",
-                         lambda: self.on_screen_close(windows))
+        windows.protocol("WM_DELETE_WINDOW", lambda: self.on_screen_close(windows))
 
     def ai_configuration(self, player_number: str, windows: tk.Toplevel):
         """The popup that permit to the player to chose the number of AI
@@ -495,11 +464,9 @@ class Screen:
             x_coordinate: int = (dimensions.width - windows_width) // 2
             y_coordinate: int = (dimensions.height - windows_height) // 2
 
-            windows.geometry(
-                f"{windows_width}x{windows_height}+{x_coordinate}+{y_coordinate}")
+            windows.geometry(f"{windows_width}x{windows_height}+{x_coordinate}+{y_coordinate}")
 
-            ai_number_label: tk.Label = tk.Label(
-                windows, text="Choose the number of AI :")
+            ai_number_label: tk.Label = tk.Label(windows, text="Choose the number of AI :")
             ai_number_label.pack()
 
             ai_number_box: ttk.Combobox = ttk.Combobox(windows, values=values)
@@ -511,12 +478,12 @@ class Screen:
                 ai_number_box.set("2")
             ai_number_box.pack(padx=20, pady=10)
 
-            bouton: tk.Button = tk.Button(
-                windows, text="Validate", command=lambda: self.ai_difficulty_configuration(ai_number_box.get(), windows))
+            bouton: tk.Button = tk.Button(windows, text="Validate",
+                                          command=lambda: self.ai_difficulty_configuration(ai_number_box.get(),
+                                                                                           windows))
             bouton.pack(pady=10)
 
-            windows.protocol("WM_DELETE_WINDOW",
-                             lambda: self.on_screen_close(windows))
+            windows.protocol("WM_DELETE_WINDOW", lambda: self.on_screen_close(windows))
         else:
             self.game_screen(None, windows)
 
@@ -545,24 +512,20 @@ class Screen:
             x_coordinate: int = int((dimensions.width - windows_width) // 2)
             y_coordinate: int = int((dimensions.height - windows_height) // 2)
 
-            windows.geometry(
-                f"{windows_width}x{windows_height}+{x_coordinate}+{y_coordinate}")
+            windows.geometry(f"{windows_width}x{windows_height}+{x_coordinate}+{y_coordinate}")
 
-            ai_difficulty_label: tk.Label = tk.Label(
-                windows, text="Choose the AI difficuly :")
+            ai_difficulty_label: tk.Label = tk.Label(windows, text="Choose the AI difficuly :")
             ai_difficulty_label.pack()
 
-            ai_difficulty_box: ttk.Combobox = ttk.Combobox(
-                windows, values=["Esay", "Medium", "Difficult"])
+            ai_difficulty_box: ttk.Combobox = ttk.Combobox(windows, values=["Esay", "Medium", "Difficult"])
             ai_difficulty_box.set("Medium")
             ai_difficulty_box.pack(padx=20, pady=10)
 
-            bouton: tk.Button = tk.Button(windows, text="Validate", command=lambda: self.game_screen(
-                ai_difficulty_box.get(), windows))
+            bouton: tk.Button = tk.Button(windows, text="Validate",
+                                          command=lambda: self.game_screen(ai_difficulty_box.get(), windows))
             bouton.pack(pady=10)
 
-            windows.protocol("WM_DELETE_WINDOW",
-                             lambda: self.on_screen_close(windows))
+            windows.protocol("WM_DELETE_WINDOW", lambda: self.on_screen_close(windows))
         else:
             self.game_screen(None, windows)
 
@@ -592,160 +555,107 @@ class Screen:
         dimensions: Tuple[int, int] = get_monitors()[0]
         self.root.geometry(f"{dimensions.width}x{dimensions.height}")
 
-        canvas: tk.Canvas = tk.Canvas(
-            self.root, width=dimensions.width, height=dimensions.height)
+        canvas: tk.Canvas = tk.Canvas(self.root, width=dimensions.width, height=dimensions.height)
         canvas.pack()
 
         border_width: int = 20
-        canvas.create_rectangle(0, 0, self.root.winfo_screenwidth(
-        ), self.root.winfo_screenheight(), outline="black", width=border_width)
-        canvas.create_rectangle(border_width, border_width, self.root.winfo_screenwidth(
-        ) - border_width, self.root.winfo_screenheight() - border_width, fill="white")
-        canvas.create_line(border_width, dimensions.height*0.25, dimensions.width -
-                           border_width, dimensions.height*0.25, fill="black", width=3)
-        canvas.create_line(dimensions.width * 0.33, border_width,
-                           dimensions.width * 0.33, dimensions.height*0.25, fill="black", width=3)
+        canvas.create_rectangle(0, 0, self.root.winfo_screenwidth(), self.root.winfo_screenheight(), outline="black",
+                                width=border_width)
+        canvas.create_rectangle(border_width, border_width, self.root.winfo_screenwidth() - border_width,
+                                self.root.winfo_screenheight() - border_width, fill="white")
+        canvas.create_line(border_width, dimensions.height * 0.25, dimensions.width - border_width,
+                           dimensions.height * 0.25, fill="black", width=3)
+        canvas.create_line(dimensions.width * 0.33, border_width, dimensions.width * 0.33, dimensions.height * 0.25,
+                           fill="black", width=3)
 
         self.game_manager.charge_map()
 
         max_x: int = 0
         max_y: int = 0
 
-        for city in self.cities:
-            nom, x, y = city
-            max_x = max(max_x, x)
-            max_y = max(max_y, y)
+        for city in self.game_manager.cities:
+            x = city.x
+            y = city.y
+            max_x = max(max_x, x)  
+            max_y = max(max_y, y) 
 
-        coeff_difference_x: float = (
-            dimensions.width - border_width * 4) / max_x
-        coeff_difference_y: float = (
-            dimensions.height * 0.75 - border_width * 4) / max_y
-        coeff_difference_x: float = (
-            dimensions.width - border_width * 4) / max_x
-        coeff_difference_y: float = (
-            dimensions.height * 0.75 - border_width * 4) / max_y
+        coeff_difference_x: float = (dimensions.width - border_width * 4) / max_x
+        coeff_difference_y: float = (dimensions.height * 0.75 - border_width * 4) / max_y
 
-        canvas.create_oval((self.game_manager.capital.x * coeff_difference_x) + border_width - 10, (self.game_manager.capital.y * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) -
-                           10, (self.game_manager.capital.x * coeff_difference_x) + border_width + 10, (self.game_manager.capital.y * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="red")
-        canvas.create_text((self.game_manager.capital.x * coeff_difference_x) + border_width, (self.game_manager.capital.y * coeff_difference_y) +
-                           (border_width + dimensions.height*0.25 + 3) + 15, text=self.game_manager.capital.name, font=("Helvetica", 8))
+        canvas.create_oval((self.game_manager.capital.x * coeff_difference_x) + border_width - 10, (self.game_manager.capital.y * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) - 10, (self.game_manager.capital.x * coeff_difference_x) + border_width + 10, (self.game_manager.capital.y * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="red")
+        canvas.create_text((self.game_manager.capital.x * coeff_difference_x) + border_width, (self.game_manager.capital.y * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 15, text=self.game_manager.capital.name, font=("Helvetica", 8))
 
-        transformed_cities: List[City] = list(map(lambda city: City(CityToken(), city.name, (city.x * coeff_difference_x) +
-                                              border_width, city.y * coeff_difference_y + (border_width + dimensions.height * 0.25 + 3)), self.game_manager.cities))
+        transformed_cities: List[City] = list(map(lambda city: City(CityToken(), city.name, (city.x * coeff_difference_x) + border_width, city.y * coeff_difference_y + (border_width + dimensions.height * 0.25 + 3)), self.game_manager.cities))
 
-        canvas.create_oval((self.capital[1] * coeff_difference_x) + border_width - 10, (self.capital[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) -
-                           10, (self.capital[1] * coeff_difference_x) + border_width + 10, (self.capital[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="red")
-        canvas.create_text((self.capital[1] * coeff_difference_x) + border_width, (self.capital[2] * coeff_difference_y) + (
-            border_width + dimensions.height*0.25 + 3) + 15, text=self.capital[0], font=("Helvetica", 8))
+        for city in transformed_cities:
+            name = city.name
+            x = city.x 
+            y = city.y
+            canvas.create_oval(x - 10, y - 10, x + 10, y + 10, fill="black")
+            canvas.create_text(x, y + 15, text=name, font=("Helvetica", 8))
 
-        for city in self.cities:
-            canvas.create_oval((city[1] * coeff_difference_x) + border_width - 10, (city[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) - 10,
-                               (city[1] * coeff_difference_x) + border_width + 10, (city[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="black")
-            canvas.create_text((city[1] * coeff_difference_x) + border_width, (city[2] * coeff_difference_y) + (
-                border_width + dimensions.height*0.25 + 3) + 15, text=city[0], font=("Helvetica", 8))
 
         way_list = []
         for way in self.game_manager.roads:
 
-            if (transport_mode == "land"):
-                color: str = "lightgreen"
-            elif (transport_mode == "sea"):
-                color: str = "blue"
+            if(way.line_way.name == "land"):
+                color:str = "lightgreen"
+            elif(way.line_way.name == "sea"):
+                color:str = "blue"
             else:
                 color: str = "gray"
 
-            similar_road_number: int = 0
-            for past_way in way_list:
-                past_first_coordinate, past_second_coordinate, past_transport_mode = past_way
-                if (first_coordinate == past_first_coordinate and second_coordinate == past_second_coordinate):
-                    similar_road_number = similar_road_number + 1
+            similar_roads = filter(lambda past_way: way.city_list[0] == past_way.city_list[0] and way.city_list[1] == past_way.city_list[1], way_list)
+            similar_road_number = len(list(similar_roads))
 
             if similar_road_number == 0:
                 canvas.create_line(
-                    (first_coordinate[1] * coeff_difference_x) + border_width,
-                    (first_coordinate[2] * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
-                    (second_coordinate[1] * coeff_difference_x) + border_width,
-                    (second_coordinate[2] * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
                     (way.city_list[0].x * coeff_difference_x) + border_width,
-                    (way.city_list[0].y * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
+                    (way.city_list[0].y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
                     (way.city_list[1].x * coeff_difference_x) + border_width,
-                    (way.city_list[1].y * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
+                    (way.city_list[1].y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
                     fill=color,
                     width=2
                 )
                 way_list.append(way)
             elif similar_road_number == 1:
-                middle_x = (first_coordinate[1] + second_coordinate[1]) / 2
-                middle_y = (first_coordinate[2] +
-                            second_coordinate[2]) / 2 + 30
                 middle_x = (way.city_list[0].x + way.city_list[1].x) / 2
                 middle_y = (way.city_list[0].y + way.city_list[1].y) / 2 + 30
 
                 canvas.create_line(
-                    (first_coordinate[1] * coeff_difference_x) + border_width,
-                    (first_coordinate[2] * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
                     (way.city_list[0].x * coeff_difference_x) + border_width,
-                    (way.city_list[0].y * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
+                    (way.city_list[0].y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
                     (middle_x * coeff_difference_x) + border_width,
-                    (middle_y * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
+                    (middle_y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
                     fill=color,
                     width=2
                 )
                 canvas.create_line(
                     (middle_x * coeff_difference_x) + border_width,
-                    (middle_y * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
-                    (second_coordinate[1] * coeff_difference_x) + border_width,
-                    (second_coordinate[2] * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
-                    (middle_y * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
+                    (middle_y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
                     (way.city_list[1].x * coeff_difference_x) + border_width,
-                    (way.city_list[1].y * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
+                    (way.city_list[1].y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
                     fill=color,
                     width=2
                 )
                 way_list.append(way)
             elif similar_road_number == 2:
-                middle_x = (first_coordinate[1] + second_coordinate[1]) / 2
-                middle_y = (first_coordinate[2] +
-                            second_coordinate[2]) / 2 - 30
                 middle_x = (way.city_list[0].x + way.city_list[1].x) / 2
                 middle_y = (way.city_list[0].y + way.city_list[1].y) / 2 - 30
 
                 canvas.create_line(
-                    (first_coordinate[1] * coeff_difference_x) + border_width,
-                    (first_coordinate[2] * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
                     (way.city_list[0].x * coeff_difference_x) + border_width,
-                    (way.city_list[0].y * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
+                    (way.city_list[0].y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
                     (middle_x * coeff_difference_x) + border_width,
-                    (middle_y * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
+                    (middle_y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
                     fill=color,
                     width=2
                 )
                 canvas.create_line(
                     (middle_x * coeff_difference_x) + border_width,
-                    (middle_y * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
-                    (second_coordinate[1] * coeff_difference_x) + border_width,
-                    (second_coordinate[2] * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
-                    (middle_y * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
+                    (middle_y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
                     (way.city_list[1].x * coeff_difference_x) + border_width,
-                    (way.city_list[1].y * coeff_difference_y) +
-                    (border_width + dimensions.height * 0.25 + 3),
+                    (way.city_list[1].y * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3),
                     fill=color,
                     width=2
                 )
@@ -754,5 +664,4 @@ class Screen:
 
 if __name__ == "__main__":
     # Creating a singleton game manager
-    GameManager.game_manager = GameManager()
-    GameManager.game_manager.start_game()
+    game_manager:GameManager = GameManager()    
