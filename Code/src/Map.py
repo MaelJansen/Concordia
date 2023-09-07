@@ -19,10 +19,10 @@ class Map:
     -------
 
     """
-    def __init__(self, min_player, map_player):
-        self.name = None
+    def __init__(self, name, min_player, max_player):
+        self.name = name
         self.min_player = min_player
-        self.map_player = map_player
+        self.max_player = max_player
         self.my_provinces = []
         self.all_positions = Position()
 
@@ -83,13 +83,14 @@ class City(Position):
     -------
 
     """
-    def __init__(self, my_assigned_city_token):
+    def __init__(self, my_assigned_city_token, myName, myX, myY):
         super().__init__()
         self.road_list = ()
         self.assigned_city_token = my_assigned_city_token
+        self.name = myName
         self.roman_char = None
-        self.x = None
-        self.y = None
+        self.x = myX
+        self.y = myY
         self.z = None
 
 class CityToken:
@@ -127,34 +128,10 @@ class Line(Position):
     -------
 
     """
-    def __init__(self):
+    def __init__(self, firstCity, secondCity, myWayName):
         super().__init__()
-        self.city_list = ()
-        self.line_way = Way()
-
-class Way:
-    """
-    A class to represent the way that will be used by the colonist to travel across the map
-
-    ...
-
-    Attributes
-    ----------
-    color : Tuple
-    max_colonist : int
-    n_colonist : int
-    name : string
-
-    Methods
-    -------
-    is_valid_move_for_colonist(self, colonist)
-
-    """
-    def __init__(self):
-        self.color = None
-        self.max_colonist = None
-        self.n_colonist = None
-        self.name = None
+        self.city_list = (firstCity, secondCity)
+        self.line_way = Way(myWayName)
 
 class Way:
     """
