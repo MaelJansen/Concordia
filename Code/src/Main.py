@@ -44,7 +44,7 @@ class GameManager:
     def __init__(self):
         self.player_controller = None
         self.game_map: Map
-        self.player_list = ()
+        self.player_list:List[Player] = []
         self.capital: City
         self.cities: List[City] = []
         self.roads: Set[Line] = []
@@ -59,9 +59,8 @@ class GameManager:
             sid="IUT12c"
         )
         self.cursor = self.connection.cursor()
-        
         self.initialization_script()
-        self.start_game()
+        
 
     def initialization_script(self):
         self.createInterface()
@@ -71,11 +70,11 @@ class GameManager:
         concordia_screen = Screen(root,self)
         root.mainloop()
 
-    def start_game(self):
+    def start_game(self, player_number):
         # Initialize the game, set up the map, create players, etc.
         #self.game_map = Map()  # To be Replaced with actual map initialization
         self.get_resource_setup_data()
-        self.create_players(2)  # Create players here
+        self.create_players(player_number)  # Create players here
         self.setup_players()
 
         # Start the first player's turn
@@ -294,7 +293,6 @@ class GameManager:
                                 FROM T_Concordia, TABLE(T_Concordia.concordia_display_area) t"""
         self.cursor.execute(sql_query_display_area)
         for display_area in self.cursor:
-            print(display_area)
             self.market_place.display_area.append([display_area[0], display_area[1], display_area[2], display_area[3]])
 
 class PlayerController:
@@ -310,9 +308,6 @@ class PlayerController:
             player.discard_pile.append(card)
             player.play_card(card)
 
-        
-
-
 class Screen:
     """This class create the display of the game (main menu, gameplay...)
     """
@@ -324,11 +319,11 @@ class Screen:
         """
         self.game_manager = game_manager
         self.root: tk.Tk = root
-        self.player_number: int = 0
         self.ai_number: int = 0
         self.ai_difficulty: str = ""
         self.maps: list[str] = []
         self.map_button: List[tk.Button]
+        self.player_number:int
         self.create_game()
 
     def create_game(self):
@@ -338,7 +333,7 @@ class Screen:
         dimensions: Tuple[int, int] = get_monitors()[0]
         self.root.geometry(f"{dimensions.width}x{dimensions.height}")
 
-        self.player_number = None
+        self.game_manager.player_list = []
         self.ai_number = None
         self.ai_difficulty = None
 
@@ -411,13 +406,11 @@ class Screen:
             self.italy_button.configure(state="disabled")
             self.europe_button.configure(state="disabled")
 
-            self.player_number = int(player_number)
+            max_ia: int = self.game_manager.game_map.max_player - len(self.game_manager.player_list)
 
-            max_ia: int = self.game_manager.game_map.max_player - self.player_number
-
-            if self.player_number == 0:
+            if len(self.game_manager.player_list) == 0:
                 min_ia: int = 2
-            elif self.player_number == 1:
+            elif len(self.game_manager.player_list) == 1:
                 min_ia: int = 1
             else:
                 min_ia: int = 0
@@ -442,9 +435,9 @@ class Screen:
             ai_number_label.pack()
 
             ai_number_box: ttk.Combobox = ttk.Combobox(windows, values=values)
-            if self.player_number > 1:
+            if len(self.game_manager.player_list) > 1:
                 ai_number_box.set("0")
-            elif self.player_number == 1:
+            elif len(self.game_manager.player_list) == 1:
                 ai_number_box.set("1")
             else:
                 ai_number_box.set("2")
@@ -524,6 +517,8 @@ class Screen:
         windows.destroy()
         if self.ai_number != 0:
             self.ai_difficulty = ai_difficulty
+        
+        self.game_manager.start_game(self.player_number)
 
         self.root.title("Concordia")
         dimensions: Tuple[int, int] = get_monitors()[0]
@@ -635,6 +630,22 @@ class Screen:
                 )
                 way_list.append(way)
                 
+        piece_counts = {}
+        for piece in self.game_manager.player_list[0].my_store_house.my_pieces:
+            if piece in piece_counts:
+                piece_counts[piece] += 1
+            else:
+                piece_counts[piece] = 1
+
+        heightCoeff = 0.05
+        width = 0
+        for piece, count in piece_counts.items():
+            canvas.create_text(border_width * 2 + width, dimensions.height * heightCoeff, text=f"{piece}: {count}", font=("Helvetica", 9), anchor="w")
+            heightCoeff += 0.05
+            if(heightCoeff == 0.25):
+                heightCoeff = 0.05
+                width = width + dimensions.width * 0.15
+                
         self.game_manager.charge_cards()
                 
         for i in range(0, 7):
@@ -645,7 +656,6 @@ class Screen:
                 x2 = 0.33 + ((0.77 / 8) * (i + 1)) - 0.018
             canvas.create_line(dimensions.width * x1 + border_width, border_width, dimensions.width * x1 + border_width, dimensions.height * 0.25,
                            fill="black", width=2)
-            
             
             canvas.create_text(dimensions.width * (x2 - 0.08), dimensions.height * 0.05, text="Personality : Mercator", font=("Helvetica", 8), anchor="w")
             canvas.create_text(dimensions.width * (x2 - 0.08), dimensions.height * 0.10, text="God : Minerva", font=("Helvetica", 8), anchor="w")
@@ -659,6 +669,7 @@ class Screen:
                 canvas.create_text(dimensions.width * (x2 - 0.08), dimensions.height * 0.20, text="Display area price : " + str(self.game_manager.market_place.display_area[i][3]) + " " + self.game_manager.market_place.display_area[i][2] + "\nand 1 good (any)", font=("Helvetica", 9), anchor="w")
             else:
                 canvas.create_text(dimensions.width * (x2 - 0.08), dimensions.height * 0.20, text="Display area price : Nothing", font=("Helvetica", 8), anchor="w")
+                
 if __name__ == "__main__":
     # Creating a singleton game manager
     game_manager:GameManager = GameManager()    
