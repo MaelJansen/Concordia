@@ -542,10 +542,6 @@ class Screen:
         canvas.pack()
 
         border_width: int = 20
-        canvas.create_rectangle(0, 0, self.root.winfo_screenwidth(), self.root.winfo_screenheight(), outline="black",
-                                width=border_width)
-        canvas.create_rectangle(border_width, border_width, self.root.winfo_screenwidth() - border_width,
-                                self.root.winfo_screenheight() - border_width, fill="white")
         canvas.create_line(border_width, dimensions.height * 0.25, dimensions.width - border_width,
                            dimensions.height * 0.25, fill="black", width=3)
         canvas.create_line(dimensions.width * 0.33, border_width, dimensions.width * 0.33, dimensions.height * 0.25,
