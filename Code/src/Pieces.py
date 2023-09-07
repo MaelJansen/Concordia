@@ -91,7 +91,6 @@ class ResourceType:
         info += f"Bonus Value: {self.bonus_value}\n"
         info += f"Price: {self.price}\n"
         info += f"Build Cost: {self.build_cost}\n"
-        return info
     
     def setup_resource_types(data):
         for r_t in data:

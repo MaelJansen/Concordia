@@ -18,6 +18,7 @@ class Player:
     house : City
     discard_pile : List<Card>
     hand : List<Card>
+    peaceful_end : bool
     Methods
     -------
 
@@ -66,8 +67,18 @@ class Player:
 
         Args:
         card (Cards): the card who the player want to play
+        
+        Parameters
+        ----------
+        card : Card
+            the card to play
         """
-        card.play_effect()
+        if card in self.hand:
+            card.play_effect()
+            self.hand.remove(card)
+            self.discard_pile.append(card)
+        else:
+            print("The card is not in your hand.")
 
 class StoreHouse:
     def __init__(self):
