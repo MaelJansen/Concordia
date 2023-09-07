@@ -21,6 +21,11 @@ class GameManager:
     game_map : Map
     player_list : List<Player>
     player_color : List<Tuple()>
+    capital : Tuple[str, int, int]
+    List : [Tuple[str, int, int]]
+    cities : List[Tuple[str, int, int]]
+    roads : Set[Tuple[Tuple[str, int, int], Tuple[str, int, int], str]]
+    
 
     Methods
     -------
@@ -32,35 +37,6 @@ class GameManager:
         self.player_controller = None
         self.game_map = None
         self.player_list = ()
-        self.initialization_script()
-
-    def initialization_script(self):
-        self.createInterface()
-
-    def createInterface(self):
-        root = tk.Tk()
-        concordia_screen = Screen(root)
-        root.mainloop() 
-
-class PlayerController:
-    pass
-
-class Screen:
-    """This class create the display of the game (main menu, gameplay...)
-    """
-    def __init__(self, root: tk.Tk):
-        """Initialize an instance of the screen class.
-
-        Args:
-        root (tk.Tk): An instance of the main application window.
-        """
-        self.root: tk.Tk = root
-        self.player_number: int = 0
-        self.ai_number: int = 0
-        self.ai_difficulty: str = ""
-        self.game_map: str = ""
-        self.maps: list[str] = []
-        self.map_button: List[tk.Button]
         self.capital: Tuple[str, int, int]
         self.cities: List[Tuple[str, int, int]] = []
         self.roads: Set[Tuple[Tuple[str, int, int], Tuple[str, int, int], str]] = []
@@ -73,10 +49,17 @@ class Screen:
             sid="IUT12c"
         )
         self.cursor = self.connection.cursor()
-
-        self.create_game()
-        
+        self.initialization_script()
         self.cursor.close()
+        
+
+    def initialization_script(self):
+        self.createInterface()
+
+    def createInterface(self):
+        root = tk.Tk()
+        concordia_screen = Screen(root, self.capital, self.cities, self.roads)
+        root.mainloop() 
 
     def charge_map(self):
         """This method uses SQL resquests to get the capital, the cities and the ways of the map that have been choosed by the player to place them in list. The lists
@@ -131,6 +114,31 @@ class Screen:
             
         self.cursor.close()
 
+
+# Creating a singleton game manager
+GameManager.game_manager:GameManager = GameManager()
+
+class PlayerController:
+    pass
+
+class Screen:
+    """This class create the display of the game (main menu, gameplay...)
+    """
+    def __init__(self, root: tk.Tk):
+        """Initialize an instance of the screen class.
+
+        Args:
+        root (tk.Tk): An instance of the main application window.
+        """
+        self.root: tk.Tk = root
+        self.player_number: int = 0
+        self.ai_number: int = 0
+        self.ai_difficulty: str = ""
+        self.game_map: str = ""
+        self.maps: list[str] = []
+        self.map_button: List[tk.Button]
+        self.create_game()
+
     def create_game(self):
         """Create the main menu screen, the player is able to choose the map with that screen
         """
@@ -163,7 +171,7 @@ class Screen:
             name (str): name of the map
             max_players (int): the max players that the player can choose (delete after sql request)
         """
-        self.game_map = name
+        GameManager.game_manager.game_map = name
 
         self.imperium_button.configure(state="disabled")
         self.italy_button.configure(state="disabled")
@@ -330,12 +338,12 @@ class Screen:
         canvas.create_line(border_width, dimensions.height*0.25, dimensions.width - border_width, dimensions.height*0.25, fill="black", width=3) 
         canvas.create_line(dimensions.width * 0.33, border_width, dimensions.width * 0.33, dimensions.height*0.25, fill="black", width=3) 
 
-        self.charge_map()
+        GameManager.game_manager.charge_map()
 
         max_x:int = 0
         max_y:int = 0
 
-        for city in self.cities:
+        for city in GameManager.game_manager.cities:
             nom, x, y = city
             max_x = max(max_x, x)  
             max_y = max(max_y, y) 
@@ -343,15 +351,19 @@ class Screen:
         coeff_difference_x:float = (dimensions.width - border_width * 4) / max_x
         coeff_difference_y:float = (dimensions.height * 0.75 - border_width * 4) / max_y
 
-        canvas.create_oval((self.capital[1] * coeff_difference_x) + border_width - 10, (self.capital[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) - 10, (self.capital[1] * coeff_difference_x) + border_width + 10, (self.capital[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="red")
-        canvas.create_text((self.capital[1] * coeff_difference_x) + border_width, (self.capital[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 15, text=self.capital[0], font=("Helvetica", 8))
+        canvas.create_oval((GameManager.game_manager.capital[1] * coeff_difference_x) + border_width - 10, (GameManager.game_manager.capital[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) - 10, (GameManager.game_manager.capital[1] * coeff_difference_x) + border_width + 10, (GameManager.game_manager.capital[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="red")
+        canvas.create_text((GameManager.game_manager.capital[1] * coeff_difference_x) + border_width, (GameManager.game_manager.capital[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 15, text=GameManager.game_manager.capital[0], font=("Helvetica", 8))
 
-        for city in self.cities:
-            canvas.create_oval((city[1] * coeff_difference_x) + border_width - 10, (city[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) - 10, (city[1] * coeff_difference_x) + border_width + 10, (city[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="black")
-            canvas.create_text((city[1] * coeff_difference_x) + border_width, (city[2] * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 15, text=city[0], font=("Helvetica", 8))
+        transformed_cities = list(map(lambda city: (city[0], city[1] * coeff_difference_x + border_width, city[2] * coeff_difference_x + (border_width + dimensions[1] * 0.25 + 3)), GameManager.game_manager.cities))
+
+        for city in transformed_cities:
+            name, x, y = city
+            canvas.create_oval(x - 10, y - 10, x + 10, y + 10, fill="black")
+            canvas.create_text(x, y + 15, text=name, font=("Helvetica", 8))
+
 
         way_list = []
-        for way in self.roads:
+        for way in GameManager.game_manager.roads:
             first_coordinate, second_coordinate, transport_mode = way
 
             if(transport_mode == "land"):
