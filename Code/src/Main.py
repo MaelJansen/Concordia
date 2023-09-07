@@ -43,7 +43,7 @@ class GameManager:
         )
         self.cursor = self.connection.cursor()
         
-        self.get_player_setup_data()
+        self.start_game()
 
     def initialization_script(self):
         self.createInterface()
@@ -55,7 +55,7 @@ class GameManager:
 
     def start_game(self):
         # Initialize the game, set up the map, create players, etc.
-        self.game_map = Map()  # Replace with actual map initialization
+        #self.game_map = Map()  # To be Replaced with actual map initialization
         self.create_players()  # Create players here
         self.setup_players()
 
@@ -64,9 +64,6 @@ class GameManager:
 
     def create_players(self):
         num_players = len(self.player_list)
-        if num_players < 2:
-            print("At least two players are required to start the game.")
-            return
 
         for player_num in range(num_players):
             player_name = f"Player {player_num + 1}"
@@ -75,28 +72,24 @@ class GameManager:
     def setup_players(self):
         # Use SQL queries to get player setup data here
         player_setup_data = self.get_player_setup_data()
+        pprint.pprint(player_setup_data)
 
         # Assign player setup data to each player
         for player_num, setup_data in enumerate(player_setup_data):
             current_player = self.player_list[player_num]
 
-            # Extract colonists setup data
             colonist_data = setup_data.get("colonists", {})
             current_player.setup_colonists(colonist_data)
 
-            # Extract goods setup data
             goods_data = setup_data.get("goods", {})
             current_player.setup_goods(goods_data)
 
-            # Extract houses setup data
             houses_data = setup_data.get("houses", 0)
             current_player.setup_houses(houses_data)
 
-            # Extract player setup cards data
             cards_data = setup_data.get("cards", {})
             current_player.setup_cards(cards_data)
 
-            # Extract sestertii setup data
             sestertii_data = setup_data.get("sestertii", {})
             current_player.setup_sestertii(sestertii_data)
 
@@ -112,6 +105,7 @@ class GameManager:
         for row in self.cursor:
             temp_colonists_data = [row[0], row[1], row[2]]
             colonists_data.append(temp_colonists_data)
+        pprint.pprint(colonists_data)
 
         sql_query_goods = f"""SELECT spg.setup_p_good_good ,
                             spg.setup_p_good_n_goods
@@ -122,6 +116,7 @@ class GameManager:
         for row in self.cursor:
             temp_goods_data = [row[0], row[1]]
             goods_data.append(temp_goods_data)
+        pprint.pprint(goods_data)
 
         sql_query_cards = f"""SELECT spc.setup_p_card_card ,
                             spc.setup_p_card_n_copies
@@ -131,6 +126,7 @@ class GameManager:
         for row in self.cursor:
             temp_cards_data = [row[0], row[1]]
             cards_data.append(temp_cards_data)
+        pprint.pprint(cards_data)
 
         sql_query_houses = f"""SELECT t.concordia_setup_player.setup_p_n_houses
                             FROM T_Concordia t"""
@@ -139,6 +135,7 @@ class GameManager:
         for row in self.cursor:
             temp_houses_data = [row[0]]
             houses_data.append(temp_houses_data)
+        pprint.pprint(houses_data)
 
         sql_query_sestertii = f"""SELECT sps.setup_p_se_order_of_play ,
                                 sps.setup_p_se_n_sestertii ,
@@ -150,38 +147,11 @@ class GameManager:
         for row in self.cursor:
             temp_sestersii_data = [row[0], row[1], row[2]]
             sestertii_data.append(temp_sestersii_data)
+        pprint.pprint(sestertii_data)
 
-        # Creating a list to hold player setup data
-        player_setup_data = []
-
-        for i in range(len(colonists_data)):
-            player_data = {
-                "colonists": {
-                    "way": colonists_data[i][0],
-                    "n_colonists": colonists_data[i][1],
-                    "n_colonists_cap": colonists_data[i][2]
-                },
-                "goods": {
-                    "good": goods_data[i][0],
-                    "n_goods": goods_data[i][1]
-                },
-                "houses": houses_data[0][0], 
-                "cards": {
-                    "card": cards_data[i][0],
-                    "n_copies": cards_data[i][1]
-                },
-                "sestertii": {
-                    "order_of_play": sestertii_data[i][0],
-                    "n_sestertii": sestertii_data[i][1]
-                }
-            }
-            
-            player_setup_data.append(player_data)
-
-        pprint.pprint()
-        pprint.pprint(player_setup_data)
-
-        return player_setup_data
+        all_player_data= colonists_data, goods_data, houses_data, cards_data, sestertii_data
+        print ('hey',all_player_data)
+        return all_player_data
 
     def start_next_player_turn(self):
         # Get the current player
