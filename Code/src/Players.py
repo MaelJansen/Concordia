@@ -33,7 +33,7 @@ class Player:
         self.hand = Cards.Card()
         self.my_houses = []
         
-    def play_card(self, card):
+    def play_card(self, card: Cards.Card):
         """
         Parameters
         ----------
