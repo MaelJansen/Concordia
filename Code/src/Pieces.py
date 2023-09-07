@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-import Map
+from .Map import Map
 
 class Piece(ABC):
     """
