@@ -331,7 +331,7 @@ class Screen:
 
 
 class PlayerController:
-    def play(self, player: Player, card: Card):
+    def play(self, player: Players.Player, card: Cards.Card):
         """Play a card of a player
 
         Args:
