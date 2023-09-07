@@ -50,38 +50,47 @@ class GameManager:
         vps = {} 
 
         for player in self.player_list:
-            total_vps = 0
+            total_vps: int = 0
             player = Type[Player](player)
             
-            # CONCORDIA: 7 VPs for peaceful means
-            # ToDO 
+            if player.peaceful_end:
+                total_vps += 7
             
-            # VESTA: VPs based on cash money and goods
-            cash_money = player.money
-            goods_value = sum(goods_price * quantity for goods_price, quantity in player.storehouse.items())
-            total_cash_value = cash_money + goods_value
-            vps_vesta = total_cash_value // 10
+            cash_money: int = player.money
+            goods_value: int = sum(goods_price * quantity for goods_price, quantity in player.storehouse.items())
+            total_cash_value: int= cash_money + goods_value
+            vps_vesta: int = total_cash_value // 10
             total_vps += vps_vesta
 
-            # JUPITER: 1 VP for each house inside a non-brick city
-            non_brick_cities = [house.city for house in player.houses if house.city.resource != "brick"]
+            non_brick_cities = [house for house in player.my_houses if house.assigned_city_token.assigned_ressource != "brick"]
             total_vps += len(non_brick_cities)
 
-            # SATURNUS: 1 VP for each province with at least one house
-            total_vps += len(player.provinces)
+            produced_resources = set()
+            for house in player.my_houses:
+                assigned_resource = house.houses.assigned_city_token.assigned_resource
+                if assigned_resource not in produced_resources:
+                    produced_resources.add(assigned_resource)
 
-            # MERCURIUS: 2 VPs for each type of good produced with houses
-            vps_mercurius = len(player.goods_produced) * 2
-            total_vps += vps_mercurius
+            total_vps += len(produced_resources) * 2
 
-            # MARS: 2 VPs for each colonist on the game board
-            vps_mars = len(player.colonists) * 2
+            vps_mars = len(player.my_colonist) * 2
             total_vps += vps_mars
 
-            # MINERVA: VPs based on cities of related city type
-            # ToDO
-            
+            i: int = 0
+            province_list: list = []
+
+            for i in range(len(player.my_houses)):
+                total_vps += 1
+
+            for provinces in self.game_map.map_provinces:
+                for city in provinces:
+                    if player.my_houses[i] == city and provinces not in province_list:
+                        province_list.append(provinces)
+
+            total_vps += len(province_list)
+
             vps[player.name] = total_vps
+            player.n_point = total_vps
 
         return vps
 

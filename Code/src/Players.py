@@ -18,6 +18,7 @@ class Player:
     house : City
     discard_pile : List<Card>
     hand : List<Card>
+    peaceful_end : bool
     Methods
     -------
 
@@ -28,10 +29,10 @@ class Player:
         self.color = ()
         self.my_store_house = StoreHouse()
         self.my_colonist = []
-        self.house = []
         self.discard_pile = []
         self.hand = []
         self.my_houses = []
+        self.peaceful_end = False
         
     def play_card(self, card: Card):
         """
