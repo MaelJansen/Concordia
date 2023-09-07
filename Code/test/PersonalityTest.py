@@ -1,8 +1,9 @@
 import unittest
 import typing
 
-from Code.src.Cards import Card, MarketPlace
+from Code.src.Cards import Card, MarketPlace, God
 from Code.src.Personalities import *
+from Code.src.Pieces import ResourceType
 from Code.src.Players import *
 from Code.src.Map import *
 
@@ -74,7 +75,7 @@ class PersonalityTest(unittest.TestCase):
         player.my_store_house.my_pieces.append(brick)
         self.assertTrue(resource in player.my_store_house.my_pieces)
         self.assertTrue(brick in player.my_store_house.my_pieces)
-        personality.pay_with_resource(resource,brick)
+        personality.pay_with_resource(resource, brick)
         self.assertTrue(resource not in player.my_store_house.my_pieces)
         self.assertTrue(brick not in player.my_store_house.my_pieces)
 
@@ -142,7 +143,7 @@ class Colonist_Test(unittest.TestCase):
         expected_sesterces: int = 5 + colonist_count
         self.assertEqual(player.money, expected_sesterces)
 
-        colonist_test.personality_action(True,test_colonist)
+        colonist_test.personality_action(True, test_colonist)
         self.assertTrue(test_colonist in player.my_colonist)
 
 
@@ -150,34 +151,42 @@ class ConcordiaTest:
     pass
 
 
-class ConsulTest:
+class ConsulTest(unittest.TestCase):
     def test_consul(self):
-        consul: Consul = Consul()
-
         player_test: Player = Player()
+        consul: Consul = Consul(player_test)
 
         nb_cards_before: int = len(player_test.hand)
-        card: Card = Card()
+        test_god = God("minerva")
+        card: Card = Card(1, test_god, consul, 1, 1)
 
-        consul.personality_action(player_test, card)
+        consul.personality_action(card)
         nb_cards_after = len(player_test.hand)
 
         self.assertEqual(nb_cards_after, nb_cards_before + 1)
 
 
-class DiplomatTest:
+class DiplomatTest(unittest.TestCase):
     def test_diplomat(self):
-        diplomat: Diplomat = Diplomat()
-
         player1: Player = Player()
         player2: Player = Player()
 
-        test_card: Card = Card()
+        resource_type: ResourceType = ResourceType("food",1,1,1,"blue")
+        resource: Resource = Resource(resource_type)
+
+        diplomat: Diplomat = Diplomat(player1)
+        spec: Specialist = Specialist(player2, resource)
+
+        city_token: CityToken = CityToken()
+        city_token.assigned_resource = resource
+        player1.my_houses.append(City(city_token,'Rome',1,1))
+
+        test_card: Card = Card(1, God("minerva"), spec, 1, 1, 1)
         player2.discard_pile.append(test_card)
 
         diplomat.personality_action(player2)
 
-        self.assertIn(diplomat, player1.discard_pile)
+        self.assertEqual(player1.my_store_house.my_pieces[0], resource)
 
 
 class MercatorTest:
@@ -274,14 +283,14 @@ class SpecialistTest(unittest.TestCase):
         player.my_houses.append(city)
 
         specialist.personality_action()
-        self.assertEqual(len(player.my_store_house.my_pieces),0)
+        self.assertEqual(len(player.my_store_house.my_pieces), 0)
 
         city_token: CityToken = CityToken()
         city_token.assigned_resource = test_food
         food_city: City = City(city_token)
         player.my_houses.append(food_city)
         specialist.personality_action()
-        self.assertEqual(len(player.my_store_house.my_pieces),1)
+        self.assertEqual(len(player.my_store_house.my_pieces), 1)
 
 
 class TribuneTest(unittest.TestCase):
@@ -298,20 +307,20 @@ class TribuneTest(unittest.TestCase):
 
         self.assertFalse(specialist in player.hand)
         self.assertTrue(tribune_test in player.hand)
-        self.assertEqual(len(player.discard_pile),1)
+        self.assertEqual(len(player.discard_pile), 1)
 
         tribune_test.personality_action(None)
 
         self.assertEqual(len(player.discard_pile), 0)
         self.assertEqual(len(player.hand), 2)
-        self.assertEqual(player.money, 0,f"{player.money} != 0")
+        self.assertEqual(player.money, 0, f"{player.money} != 0")
         self.assertTrue(specialist in player.hand)
         self.assertTrue(tribune_test in player.hand)
         pass
 
     def test_tribune2(self):
         test_food = Resource(2, 1, "food", 1, "yellow", "food")
-        test_tool = Resource(2,1,"tool",1,"grey","tool")
+        test_tool = Resource(2, 1, "tool", 1, "grey", "tool")
 
         player: Player = Player()
         specialist: Specialist = Specialist(player, test_food)
@@ -319,7 +328,7 @@ class TribuneTest(unittest.TestCase):
 
         player.my_store_house.my_pieces.append(test_food)
 
-        colonist_test: Colonist = Colonist("ground","blue")
+        colonist_test: Colonist = Colonist("ground", "blue")
 
         tribune_test: Tribune = Tribune(player)
         player.hand.append(tribune_test)

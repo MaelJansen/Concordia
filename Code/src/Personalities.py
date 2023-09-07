@@ -222,9 +222,8 @@ class Consul(Personality):
     def __init__(self, p: object):
         super().__init__(p)
 
-    def personality_action(self):
+    def personality_action(self, card_chose: object):
         # Ask the player to buy a card in market without additional cost
-        card_chose = self.player.buy_in_market(False)
         if card_chose is not None:
             cost_of_card = card_chose.card_cost
             if self.could_pay(cost_of_card):
@@ -250,10 +249,8 @@ class Diplomat(Personality):
     def __init__(self, p: object):
         super().__init__(p)
 
-    def personality_action(self):
-        # Ask the player to choice another discard's player
-        player_choice = self.player.choice_discard()
-        # and play the card on the top of this discard
+    def personality_action(self, player_choice: object):
+        # play the card on the top of this discard
         discard_player_choice = player_choice.discard_pile
         discard_player_choice[len(discard_player_choice) - 1].my_personality.personality_action(self.player)
 
