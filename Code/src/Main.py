@@ -5,6 +5,7 @@ from tkinter import ttk
 from PIL import ImageTk, Image
 from screeninfo import get_monitors
 # import Players
+from .Players import Player
 from .Cards import Card
 from .Map import Map
 from typing import Type
@@ -44,20 +45,57 @@ class GameManager:
         root = tk.Tk()
         concordia_screen = Screen(root)
         root.mainloop()
+        
+    def calculate_victory_points(self):
+        vps = {} 
+
+        for player in self.player_list:
+            total_vps = 0
+            player = Type[Player](player)
+            
+            # CONCORDIA: 7 VPs for peaceful means
+            # ToDO 
+            
+            # VESTA: VPs based on cash money and goods
+            cash_money = player.money
+            goods_value = sum(goods_price * quantity for goods_price, quantity in player.storehouse.items())
+            total_cash_value = cash_money + goods_value
+            vps_vesta = total_cash_value // 10
+            total_vps += vps_vesta
+
+            # JUPITER: 1 VP for each house inside a non-brick city
+            non_brick_cities = [house.city for house in player.houses if house.city.resource != "brick"]
+            total_vps += len(non_brick_cities)
+
+            # SATURNUS: 1 VP for each province with at least one house
+            total_vps += len(player.provinces)
+
+            # MERCURIUS: 2 VPs for each type of good produced with houses
+            vps_mercurius = len(player.goods_produced) * 2
+            total_vps += vps_mercurius
+
+            # MARS: 2 VPs for each colonist on the game board
+            vps_mars = len(player.colonists) * 2
+            total_vps += vps_mars
+
+            # MINERVA: VPs based on cities of related city type
+            # ToDO
+            
+            vps[player.name] = total_vps
+
+        return vps
+
 
 
 class PlayerController:
-    def play(self, player: object, card: Card):
+    def play(self, player: Player, card: Card):
         """Play a card of a player
 
         Args:
         player (Player) : The player who play
         card (Card) : The card playing
         """
-        if card in player.hand:
-            player.hand.remove(card)
-            player.discard_pile.append(card)
-            player.play_card(card)
+        player.play_card(self,card)
 
 
 class Screen:

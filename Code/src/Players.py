@@ -33,7 +33,7 @@ class Player:
         self.hand = []
         self.my_houses = []
         
-    def play_card(self, card: Cards.Card):
+    def play_card(self, card: Card):
         """
         Parameters
         ----------
@@ -41,19 +41,11 @@ class Player:
             the card to play
         """
         if card in self.hand:
-            card.play_card()
+            card.play_effect()
             self.hand.remove(card)
             self.discard_pile.append(card)
         else:
             print("The card is not in your hand.")
-
-    def play_card(self, card: Card):
-        """ Play a card ( and her effect)
-
-        Args:
-        card (Cards): the card who the player want to play
-        """
-        card.play_effect()
 
 class StoreHouse:
     def __init__(self):
