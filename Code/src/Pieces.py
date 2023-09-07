@@ -51,7 +51,7 @@ class Colonist(Piece):
             
     
 
-class Resource(ABC):
+class Resource(Piece):
     """
     A class to represent resources in the game Concordia.
 

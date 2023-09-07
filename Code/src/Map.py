@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-#from Piece import Ressource
+import typing
+import Pieces
 
 class Map:
     """
@@ -108,10 +109,10 @@ class CityToken:
     -------
 
     """
-    def __init__(self):
-        roman_char = None
-        n_copies = None
-        assigned_ressource = None
+    def __init__(self, roman_char: typing.Text, n_copies: int, assigned_resource: typing.Type[Pieces.Resource]):
+        self.roman_char = roman_char
+        self.n_copies = n_copies
+        self.assigned_resource = assigned_resource
 
 class Line(Position):
     """

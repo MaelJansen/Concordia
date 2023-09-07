@@ -6,13 +6,15 @@ from PIL import ImageTk, Image
 from screeninfo import get_monitors
 # import Players
 import Map
-from typing import Type
+from typing import Type, List
 import oracledb
+import Map
+import Pieces
 
 
 class GameManager:
     """
-    A class to control the game 
+    A singleton class to control the game 
 
     ...
 
@@ -31,6 +33,8 @@ class GameManager:
     """
 
     def __init__(self):
+        """To make this class represent a singleton, the constructor should be private
+        """
         self.player_controller = None
         self.game_map = None
         self.player_list = []
@@ -116,7 +120,7 @@ class GameManager:
             temp_colonists_data = [row[0], row[1], row[2]]
             colonists_data.append(temp_colonists_data)
 
-        print(colonists_data)
+        #print(colonists_data)
 
         sql_query_goods = f"""SELECT spg.setup_p_good_good ,
                             spg.setup_p_good_n_goods
@@ -128,7 +132,7 @@ class GameManager:
             temp_goods_data = [row[0], row[1]]
             goods_data.append(temp_goods_data)
 
-        print(goods_data)
+        #print(goods_data)
 
         sql_query_cards = f"""SELECT spc.setup_p_card_card ,
                             spc.setup_p_card_n_copies
@@ -151,20 +155,29 @@ class GameManager:
     def setup_city_token_distribution(self):
         """Setting up the distribution of the city tokens
         """
+        # Getting the city token data from the database
+        city_token_data: List = self.get_city_token_distribution_setup_data()
+        # City token attribution
+        for city_token_elem in city_token_data:
+            nb_copies = city_token_elem[2]
+            res_type: str = city_token_elem[1]
 
-    def get_city_token_distribution_setup_data(self):
+            # Creating the city token object
+            city_token: Map.CityToken = Map.CityToken(city_token_elem[0], nb_copies, Pieces.Resource(Pieces.ResourceType.RESOURCE_TYPES[res_type]))
+            # Attributing the city tokens
+            for i in range(nb_copies):
+                pass
+
+    def get_city_token_distribution_setup_data(self) -> List[Tuple]:
         """Getting data to set up the city token distribution
         """
-        sql_req = "SELECT t.* FROM T_Concordia, TABLE(T_Concordia.concordia_city_token) t;"
+        sql_req = "SELECT t.* FROM T_Concordia, TABLE(T_Concordia.concordia_city_token) t"
 
         self.cursor.execute(sql_req)
 
         data = []
         for row in self.cursor:
-            tmp = [row[0], row[1], row[2]]
-            data.append(tmp)
-
-        print(data)
+            data.append(row)
 
         return data
 
@@ -599,5 +612,6 @@ class Screen:
 
 
 if __name__ == "__main__":
-    game_controller = GameManager()
-    game_controller.get_city_token_distribution_setup_data()
+    # Singleton pattern
+    GameManager.game_manager = GameManager()
+    GameManager.game_manager.get_city_token_distribution_setup_data()
