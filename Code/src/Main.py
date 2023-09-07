@@ -46,14 +46,13 @@ class GameManager:
         self.connection = oracledb.connect(
             user="ETD",
             password="ETD",
-            host="info-atchoum.iut.bx",
+            host="localhost",
             port=1521,
             sid="IUT12c"
         )
         self.cursor = self.connection.cursor()
         
-        #self.start_game()
-        self.get_resource_setup_data()
+        self.start_game()
 
     def initialization_script(self):
         self.createInterface()
@@ -66,11 +65,11 @@ class GameManager:
     def start_game(self):
         # Initialize the game, set up the map, create players, etc.
         #self.game_map = Map()  # To be Replaced with actual map initialization
+        self.get_resource_setup_data()
         self.create_players(2)  # Create players here
         self.setup_players()
 
         # Start the first player's turn
-        self.start_next_player_turn()
 
     def create_players(self, num_players:int):
         for player_num in range(num_players):
@@ -168,8 +167,6 @@ class GameManager:
             goods_data.append(temp_goods_data)
         Pieces.ResourceType.setup_resource_types(goods_data)
 
-
-
     def start_next_player_turn(self):
         # Get the current player
         current_player = self.player_list[self.current_player_index]
@@ -220,6 +217,14 @@ class Screen:
         self.roads: Set[Tuple[Tuple[str, int, int], Tuple[str, int, int], str]] = []
 
         self.create_game()
+        self.connection = oracledb.connect(
+            user="ETD",
+            password="ETD",
+            host="localhost",
+            port=1521,
+            sid="IUT12c"
+        )
+        self.cursor = self.connection.cursor()
         
 
     def initialization_script(self):
