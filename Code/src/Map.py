@@ -109,9 +109,9 @@ class CityToken:
 
     """
     def __init__(self):
-        roman_char = None
-        n_copies = None
-        assigned_ressource = None
+        self.roman_char = None
+        self.n_copies = None
+        self.assigned_resource = None
 
 class Line(Position):
     """
