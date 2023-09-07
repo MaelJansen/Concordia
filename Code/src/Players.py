@@ -58,12 +58,7 @@ class Player:
         Player.MAX_HOUSES = houses_data[0][0]
 
     def setup_cards(self,cards_data):
-        print(cards_data)
-        for i in range (len(cards_data)):
-            type = cards_data[i][0]
-            n_copies = cards_data[i][1]
-            for y in range (n_copies):
-                self.hand.append(Cards.Card(type))
+        pass
         
     def setup_sestertii(self,sestersii_data):
         self.money = sestersii_data[1]
