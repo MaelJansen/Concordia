@@ -1,6 +1,6 @@
-from .Pieces import Piece, Colonist
-from .Cards import Card
-from .Map import Map, City
+from Pieces import Piece, Colonist
+from Cards import Card
+from Map import Map, City
 
 class Player:
     """
