@@ -4,8 +4,8 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import ImageTk, Image
 from screeninfo import get_monitors
-from Player import Player
-from Map import Map
+#import Players
+import Map
 from typing import Type
 import oracledb
 
@@ -46,13 +46,20 @@ class PlayerController:
     pass
 
 class Screen:
+    """This class create the display of the game (main menu, gameplay...)
+    """
     def __init__(self, root: tk.Tk):
+        """Initialize an instance of the screen class.
+
+        Args:
+        root (tk.Tk): An instance of the main application window.
+        """
         self.root: tk.Tk = root
         self.player_number: int = 0
         self.ai_number: int = 0
         self.ai_difficulty: str = ""
         self.game_map: str = ""
-        
+        self.maps: list[str] = []
         self.map_button: List[tk.Button]
         self.capital: Tuple[str, int, int]
         self.cities: List[Tuple[str, int, int]] = []
@@ -68,9 +75,13 @@ class Screen:
         self.cursor = self.connection.cursor()
 
         self.create_game()
+        
+        self.cursor.close()
 
     def charge_map(self):
-        
+        """This method uses SQL resquests to get the capital, the cities and the ways of the map that have been choosed by the player to place them in list. The lists
+        will be used to display the city, ways... on the map. 
+        """
         sql_query_capital = f"""SELECT t.MAP_CAPITAL.CITY_NAME AS CAPITAL, t.MAP_CAPITAL.CITY_COORDINATES.X as x, t.MAP_CAPITAL.CITY_COORDINATES.Y as y
                             FROM T_Concordia, TABLE(T_Concordia.concordia_map) t 
                             WHERE t.map_name='{self.game_map}'"""
@@ -120,33 +131,25 @@ class Screen:
             
         self.cursor.close()
 
-        
-        # self.temp_ = ("Rome", 500, 500)
-        # self.temp_villes = [("Venise", 100, 100), ("Paris", 50, 60), ("Madrid", 456, 689), ("Berlin", 870, 900), ("Tokyo", 321, 457), ("Sao-Paulo", 132, 873), ("Sao-Carlos", 103, 832), ("Biganos", 578, 213), ("Prague", 643, 43)]
-        # self.roads = [(self.temp_villes[5], self.temp_villes[6], "Land"), (self.temp_villes[5], self.temp_villes[6], "Water"), (self.temp_villes[5], self.temp_villes[6], "Air"), (self.temp_villes[5], self.temp_villes[2], "Land"), (self.temp_villes[2], self.temp_, "Water"), (self.temp_villes[2], self.temp_villes[6], "Air")]
-
-
     def create_game(self):
+        """Create the main menu screen, the player is able to choose the map with that screen
+        """
         self.root.title("Concordia")
         dimensions: Tuple[int, int] = get_monitors()[0]
         self.root.geometry(f"{dimensions.width}x{dimensions.height}")
 
-        # Reset du nombre de joueurs en cas de partie terminée
         self.player_number = None
         self.ai_number = None
         self.ai_difficulty = None
         self.game_map = None
 
-        # Charger l'image
         image: Image.Image = Image.open("Code/src/Images/fond.png")
         image = image.resize((dimensions.width, dimensions.height), Image.LANCZOS) 
         self.photo = ImageTk.PhotoImage(image)
 
-        # Créer un label pour afficher l'image
         label:tk.Label = tk.Label(self.root, image=self.photo)
         label.place(x=0, y=0, relwidth=1, relheight=1)
 
-        # Placement des boutons
         self.imperium_button = tk.Button(self.root, text="Imperium", command=lambda: self.player_configuration("Imperium", 5), font=("Helvetica", 24))
         self.imperium_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 - 60, width=300, height=120)
         self.italy_button = tk.Button(self.root, text="Italia", command=lambda: self.player_configuration("Italia", 4), font=("Helvetica", 24))
@@ -154,6 +157,12 @@ class Screen:
 
 
     def player_configuration(self, name: str, max_players: int):
+        """The popup that permit to the player to chose the number of players (need to get the min player and max player from SQL Request ToDo)
+
+        Args:
+            name (str): name of the map
+            max_players (int): the max players that the player can choose (delete after sql request)
+        """
         self.game_map = name
 
         self.imperium_button.configure(state="disabled")
@@ -186,6 +195,13 @@ class Screen:
         windows.protocol("WM_DELETE_WINDOW", lambda: self.on_screen_close(windows))
 
     def ai_configuration(self, player_number: str, max_players: int, windows: tk.Toplevel):
+        """The popup that permit to the player to chose the number of AI
+
+        Args:
+            player_number (str): The number of player that have been choosed by the player
+            max_players (int): the max players (AI+Human) that the player can choose (delete after sql request)
+            windows (tk.Toplevel): The precedent pop-up that get instantly closed
+        """
         self.player_number = int(player_number)
         if self.player_number != max_players:
             windows.destroy()
@@ -239,6 +255,12 @@ class Screen:
             self.game_screen(None, windows)
 
     def ai_difficulty_configuration(self, ai_number: str, windows: tk.Toplevel):
+        """The popup that permit to the player to chose the AI difficulty
+
+        Args:
+            ai_number (str): The number of AI that the player choosed
+            windows (tk.Toplevel): The precedent pop-up that get instantly closed
+        """
         self.ai_number = int(ai_number)
         if(self.ai_number != 0):
             windows.destroy()
@@ -274,12 +296,23 @@ class Screen:
             self.game_screen(None, windows)
 
     def on_screen_close(self, windows: tk.Toplevel):
+        """Activate the main menu button if the player close a popup (the button get desactivate if a popup is open)
+
+        Args:
+            windows (tk.Toplevel): The pop-up that get closed
+        """
         windows.destroy()
         self.imperium_button.configure(state="normal")
         self.italy_button.configure(state="normal")
         windows.destroy()
 
     def game_screen(self, ai_difficulty: str, windows: tk.Toplevel):
+        """Create and display the main game screen
+
+        Args:
+            ai_difficulty (str): difficulty of the AI that the player have choosen
+            windows (tk.Toplevel): The precedent pop-up that get instantly closed
+        """
         windows.destroy()
         if self.ai_number != 0:
             self.ai_difficulty = ai_difficulty

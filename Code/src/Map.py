@@ -23,7 +23,7 @@ class Map:
         self.name = None
         self.min_player = min_player
         self.map_player = map_player
-        self.my_provinces = Province()
+        self.my_provinces = []
         self.all_positions = Position()
 
 class Province:
@@ -46,6 +46,7 @@ class Province:
         self.color = ()
         self.my_cities = City()
         self.ressource_bonus = my_ressource_bonus
+        self.side_resource_bonus = True
 
 class Position(ABC):
     """
@@ -154,9 +155,6 @@ class Way:
         self.max_colonist = None
         self.n_colonist = None
         self.name = None
-        
-
-python
 
 class Way:
     """
