@@ -87,10 +87,12 @@ class ResourceType:
         self.color = resource_color
 
     def get_info(self):
-        info = f"Color: {self.color}\n"
+        info = f"Name: {self.name}\n"
+        info += f"Color: {self.color}\n"
         info += f"Bonus Value: {self.bonus_value}\n"
         info += f"Price: {self.price}\n"
         info += f"Build Cost: {self.build_cost}\n"
+        return info
     
     def setup_resource_types(data):
         for r_t in data:
