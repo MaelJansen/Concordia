@@ -1,6 +1,7 @@
 from ast import List, Set, Tuple
 from math import atan2, degrees
 import tkinter as tk
+import pprint
 from tkinter import ttk
 from PIL import ImageTk, Image
 from screeninfo import get_monitors
@@ -12,6 +13,7 @@ from Cards import Card, MarketPlace
 from Map import Map
 from typing import Type
 import oracledb
+import Pieces
 
 
 class GameManager:
@@ -47,6 +49,8 @@ class GameManager:
         self.cities: List[City] = []
         self.roads: Set[Line] = []
         self.market_place:MarketPlace = MarketPlace()
+        self.player_list = []  
+        self.current_player_index = 0  # Index of the current player
         self.connection = oracledb.connect(
             user="ETD",
             password="ETD",
@@ -55,16 +59,150 @@ class GameManager:
             sid="IUT12c"
         )
         self.cursor = self.connection.cursor()
-        self.initialization_script()
-        self.cursor.close()
+        
+
+        self.start_game()
 
     def initialization_script(self):
         self.createInterface()
 
     def createInterface(self):
         root = tk.Tk()
-        concordia_screen = Screen(root, self)
+        concordia_screen = Screen(root,self)
         root.mainloop()
+
+    def start_game(self):
+        # Initialize the game, set up the map, create players, etc.
+        #self.game_map = Map()  # To be Replaced with actual map initialization
+        self.get_resource_setup_data()
+        self.create_players(2)  # Create players here
+        self.setup_players()
+
+        # Start the first player's turn
+
+    def create_players(self, num_players:int):
+        for player_num in range(num_players):
+            self.player_list.append(Players.Player())  # Replace with actual player creation
+
+    def setup_players(self):
+        # Use SQL queries to get player setup data here
+        player_setup_data = self.get_player_setup_data()
+
+        # Assign player setup data to each player
+        for player_num in range (0,len(self.player_list)):
+            current_player = self.player_list[player_num]
+
+            colonist_data = player_setup_data[0]
+            current_player.setup_colonists(colonist_data)
+
+            goods_data = player_setup_data[1]
+            current_player.setup_goods(goods_data)
+
+            houses_data = player_setup_data[2]
+            current_player.setup_houses(houses_data)
+
+            cards_data = player_setup_data[3]
+            current_player.setup_cards(cards_data)
+
+            sestertii_data = player_setup_data[4][player_num]
+            current_player.setup_sestertii(sestertii_data)
+
+    def get_player_setup_data(self):
+        # Executing the SQL queries to retrieve the data
+        sql_query_colonists = f"""SELECT spc.setup_p_colon_way,
+                            spc.setup_p_colon_n_colonists,
+                            spc.setup_p_colon_n_colonists_cap
+                            FROM T_Concordia t, table(t.concordia_setup_player.setup_p_colonist) spc"""
+        
+        self.cursor.execute(sql_query_colonists)
+        colonists_data=[]
+        for row in self.cursor:
+            temp_colonists_data = [row[0], row[1], row[2]]
+            colonists_data.append(temp_colonists_data)
+
+        sql_query_goods = f"""SELECT spg.setup_p_good_good ,
+                            spg.setup_p_good_n_goods
+                            FROM T_Concordia t, table(t.concordia_setup_player.setup_p_good) spg"""
+        
+        self.cursor.execute(sql_query_goods)
+        goods_data=[]
+        for row in self.cursor:
+            temp_goods_data = [row[0], row[1]]
+            goods_data.append(temp_goods_data)
+
+        sql_query_cards = f"""SELECT spc.setup_p_card_card ,
+                            spc.setup_p_card_n_copies
+                            FROM T_Concordia t, table(t.concordia_setup_player.setup_p_card) spc """
+        self.cursor.execute(sql_query_cards)
+        cards_data = []
+        for row in self.cursor:
+            temp_cards_data = [row[0], row[1]]
+            cards_data.append(temp_cards_data)
+
+        sql_query_houses = f"""SELECT t.concordia_setup_player.setup_p_n_houses
+                            FROM T_Concordia t"""
+        self.cursor.execute(sql_query_houses)
+        houses_data = []
+        for row in self.cursor:
+            temp_houses_data = [row[0]]
+            houses_data.append(temp_houses_data)
+
+        sql_query_sestertii = f"""SELECT sps.setup_p_se_order_of_play ,
+                                sps.setup_p_se_n_sestertii ,
+                                sps.setup_p_se_n_sestertii_variant
+                                FROM T_Concordia t, table(t.concordia_setup_player.setup_p_sestertius) sps"""
+        
+        self.cursor.execute(sql_query_sestertii)
+        sestertii_data = []
+        for row in self.cursor:
+            temp_sestersii_data = [row[0], row[1], row[2]]
+            sestertii_data.append(temp_sestersii_data)
+
+        all_player_data= colonists_data, goods_data, houses_data, cards_data, sestertii_data
+        return all_player_data
+    
+    def get_resource_setup_data(self):
+        sql_query_goods = f"""SELECT t.good_name name,
+                                t.good_value value,
+                                good_color color,
+                                good_n_sestertii_bonus_marker n_sestertii_bonus_marker,
+                                good_n_sestertii_build_cost n_sestertii_build_cost
+                                FROM T_Concordia, TABLE(T_Concordia.concordia_good) t"""
+        
+        self.cursor.execute(sql_query_goods)
+        goods_data=[]
+        for row in self.cursor:
+            temp_goods_data = [row[0], row[1], row[2], row[3], row[4]]
+            goods_data.append(temp_goods_data)
+        Pieces.ResourceType.setup_resource_types(goods_data)
+
+    def start_next_player_turn(self):
+        # Get the current player
+        current_player = self.player_list[self.current_player_index]
+
+        # Start the player's turn (you need to implement this in PlayerController)
+        self.player_controller.start_player_turn(current_player)
+
+        # Increment the current player index
+        self.current_player_index = (self.current_player_index + 1) % len(self.player_list)
+
+    def end_game(self):
+        # End the game, calculate scores, display results, etc.
+        pass
+   
+class PlayerController:
+    def play(self, player: object, card: Cards.Card):
+        """Play a card of a player
+
+        Args:
+        player (Player) : The player who play
+        card (Card) : The card playing
+        """
+        if card in player.hand:
+            player.hand.remove(card)
+            player.discard_pile.append(card)
+            player.play_card(card)
+
         
     def calculate_victory_points(self):
         vps = {} 
@@ -172,18 +310,6 @@ class GameManager:
             print(display_area)
             self.market_place.display_area.append([display_area[0], display_area[1], display_area[2], display_area[3]])
 
-class PlayerController:
-    def play(self, player: Player, card: Card):
-        """Play a card of a player
-
-        Args:
-        player (Player) : The player who play
-        card (Card) : The card playing
-        """
-        player.play_card(self,card)
-    
-class PlayerController:
-    pass
 
 class Screen:
     """This class create the display of the game (main menu, gameplay...)
