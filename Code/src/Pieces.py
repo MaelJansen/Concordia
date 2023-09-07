@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from .Map import Map
+import Map
+import typing
 
 class Piece(ABC):
     """
@@ -49,10 +50,10 @@ class Colonist(Piece):
             print(f"{self.color} colonist moved along {way.name}.")
         else:
             print("Invalid move for the colonist.")
-            
-    
+        
 
-class Resource(ABC):
+
+class ResourceType:
     """
     A class to represent resources in the game Concordia.
 
@@ -68,30 +69,38 @@ class Resource(ABC):
         The cost of building or producing the resource.
     color : str
         The color associated with the resource.
-    name : str
-        The name of the resource.
 
     Methods
     -------
-    __init__(self, resource_price, resource_bonus_value, resource_type, build_cost, resource_color, resource_name)
+    __init__(self, resource_price, resource_bonus_value, build_cost, resource_color)
         Initializes a new instance of the Resource class.
     get_info(self)
         Returns a string with information about the resource.
 
     """
-    def __init__(self, resource_price, resource_bonus_value, resource_type, build_cost, resource_color, resource_name):
+    # static
+    RESOURCE_TYPES : typing.Dict[str,object] = {}
+    def __init__(self, name:typing.Text, resource_price, resource_bonus_value, build_cost, resource_color):
+        self.name = name 
         self.price = resource_price
         self.bonus_value = resource_bonus_value
-        self.type = resource_type
         self.build_cost = build_cost
         self.color = resource_color
-        self.name = resource_name
 
     def get_info(self):
-        info = f"Resource: {self.name}\n"
-        info += f"Type: {self.type}\n"
+        info = f"Name: {self.name}\n"
         info += f"Color: {self.color}\n"
         info += f"Bonus Value: {self.bonus_value}\n"
         info += f"Price: {self.price}\n"
         info += f"Build Cost: {self.build_cost}\n"
         return info
+    
+    def setup_resource_types(data):
+        for r_t in data:
+            resource_name, resource_price, resource_color, resource_bonus_value, build_cost= r_t[0],r_t[1], r_t[2],r_t[3],r_t[4]
+            res_type_obj = ResourceType(resource_name,resource_price,resource_bonus_value,build_cost, resource_color)
+            ResourceType.RESOURCE_TYPES[resource_name] = res_type_obj
+
+class Resource(Piece):
+    def __init__(self, res_type: typing.Type[ResourceType]):
+        self.resource_type = res_type

@@ -20,20 +20,26 @@ class Card:
 
     """
 
-    def __init__(self):
-        self.order = None
-        self.my_diety = None
-        self.my_personality = None
-        self.card_cost = []
-        self.sale_cost = None
-        self.sale_cost_diplomat = None
-
+    def __init__(self, order, my_diety, my_personality, card_cost, sale_cost, sale_cost_diplomat):
+        self.order = order
+        self.my_diety = my_diety
+        self.my_personality = my_personality
+        self.card_cost = card_cost
+        self.sale_cost = sale_cost
+        self.sale_cost_diplomat = sale_cost_diplomat
+        
     def play_effect(self):
-        """ Play the effect of this card
-
         """
-        self.my_personality.personality_action()
-
+        Parameters
+        ----------
+        player : Player
+            the player who plays the card
+        """
+        if self.my_personality:
+            self.my_personality.personality_action()
+        else:
+            print("This card has no associated personality action.")
+        
 class God:
     """
     A class to represent the
