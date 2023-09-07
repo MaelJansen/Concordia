@@ -1,4 +1,5 @@
 import Map
+import typing
 
 class Card:
     """
@@ -18,7 +19,6 @@ class Card:
     -------
 
     """
-
     def __init__(self, order, my_diety, my_personality, card_cost, sale_cost, sale_cost_diplomat):
         self.order = order
         self.my_diety = my_diety

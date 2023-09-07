@@ -49,7 +49,8 @@ class Colonist(Piece):
             print(f"{self.color} colonist moved along {way.name}.")
         else:
             print("Invalid move for the colonist.")
-        
+    def __repr__(self) -> str:
+        return f"{self.color} {self.type} colonist"
 
 
 class ResourceType:
@@ -103,3 +104,6 @@ class ResourceType:
 class Resource(Piece):
     def __init__(self, res_type: typing.Type[ResourceType]):
         self.resource_type = res_type
+    
+    def __repr__(self) -> str:
+        return f"{self.resource_type.name} resource"
