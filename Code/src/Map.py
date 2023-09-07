@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import typing
 import Pieces
 
+
 class Map:
     """
     The class to represent the map
@@ -20,12 +21,14 @@ class Map:
     -------
 
     """
+
     def __init__(self, min_player, map_player):
         self.name = None
         self.min_player = min_player
         self.map_player = map_player
         self.my_provinces = []
         self.all_positions = Position()
+
 
 class Province:
     """
@@ -43,11 +46,13 @@ class Province:
     -------
 
     """
+
     def __init__(self, my_ressource_bonus):
         self.color = ()
         self.my_cities = City()
         self.ressource_bonus = my_ressource_bonus
         self.side_resource_bonus = True
+
 
 class Position(ABC):
     """
@@ -62,8 +67,10 @@ class Position(ABC):
     -------
 
     """
+
     def __init__(self):
         pass
+
 
 class City(Position):
     """
@@ -84,6 +91,7 @@ class City(Position):
     -------
 
     """
+
     def __init__(self, my_assigned_city_token):
         super().__init__()
         self.road_list = ()
@@ -92,6 +100,7 @@ class City(Position):
         self.x = None
         self.y = None
         self.z = None
+
 
 class CityToken:
     """
@@ -109,10 +118,12 @@ class CityToken:
     -------
 
     """
+
     def __init__(self, roman_char: typing.Text, n_copies: int, assigned_resource: typing.Type[Pieces.Resource]):
         self.roman_char = roman_char
         self.n_copies = n_copies
         self.assigned_resource = assigned_resource
+
 
 class Line(Position):
     """
@@ -128,10 +139,12 @@ class Line(Position):
     -------
 
     """
+
     def __init__(self):
         super().__init__()
         self.city_list = ()
         self.line_way = Way()
+
 
 class Way:
     """
@@ -151,11 +164,13 @@ class Way:
     is_valid_move_for_colonist(self, colonist)
 
     """
+
     def __init__(self):
         self.color = None
         self.max_colonist = None
         self.n_colonist = None
         self.name = None
+
 
 class Way:
     """
@@ -176,6 +191,7 @@ class Way:
         Checks if the move is valid for the given colonist.
 
     """
+
     def __init__(self, name):
         self.name = name
         self.occupant = None
@@ -183,8 +199,8 @@ class Way:
     def is_valid_move_for_colonist(self, colonist):
         if self.occupant is not None:
             return False
-        
+
         if colonist.type != self.name:
             return False
-        
+
         return True
