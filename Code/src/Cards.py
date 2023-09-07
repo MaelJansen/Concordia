@@ -1,4 +1,5 @@
 from .Map import Map
+from .Personalities import *
 
 class Card:
     """
@@ -85,23 +86,23 @@ class God:
             case "Jupiter":
                 vp :int = 0
                 for houses in player.my_houses:
-                    if vp < 15 & houses.assigned_city_token.assigned_ressource != "Brick":
+                    if vp < 15 and houses.assigned_city_token.assigned_resource != "brick":
                         vp += 1
                 player.n_point += vp
 
             case "Saturnus":
                 conquered_provinces = []
-                for provinces in map:
-                    for city in provinces:
-                        if player.house == city & city not in conquered_provinces:
+                for provinces in map.my_provinces:
+                    for city in provinces.my_cities:
+                        if city in player.my_houses and city not in conquered_provinces:
                             conquered_provinces.append(city)
                 player.n_point += len(conquered_provinces)
 
             case "Mercurius":
                 producted_resources : list = []
                 for house in player.my_houses:
-                    if house.houses.assigned_city_token.assigned_ressource not in producted_resources:
-                        producted_resources.append(house.houses.assigned_city_token.assigned_ressource)
+                    if house.assigned_city_token.assigned_resource not in producted_resources:
+                        producted_resources.append(house.assigned_city_token.assigned_resource)
                 player.n_point += len(producted_resources)*2
 
             case "Mars":
@@ -117,7 +118,12 @@ class God:
                 player.n_point += vp
 
             case "Minerva":
-                player.n_point += 0
+                for house in player.my_houses:
+                    for card in player.hand:
+                        if card.my_personality.__class__ == Specialist and \
+                                card.my_personality.type.type == \
+                                house.assigned_city_token.assigned_resource:
+                            player.n_point += card.my_diety.victory_points
             case _:
                 #action
                 pass

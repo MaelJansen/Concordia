@@ -40,11 +40,12 @@ class Colonist(Piece):
         super().__init__()
         self.type = colonist_type
         self.color = colonist_color
-        self.colonist_way = Map.Way()
+        self.colonist_way = None
 
     def move(self, way):
         if way.is_valid_move_for_colonist(self):
             self.colonist_way = way
+            way.occupant = self
             print(f"{self.color} colonist moved along {way.name}.")
         else:
             print("Invalid move for the colonist.")
