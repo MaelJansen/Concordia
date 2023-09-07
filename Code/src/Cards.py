@@ -1,4 +1,4 @@
-from .Map import Map
+import Map
 
 class Card:
     """

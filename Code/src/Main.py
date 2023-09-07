@@ -5,8 +5,8 @@ from tkinter import ttk
 from PIL import ImageTk, Image
 from screeninfo import get_monitors
 # import Players
-from .Cards import Card
-from .Map import Map
+import Cards
+import Map
 from typing import Type
 import oracledb
 
@@ -47,7 +47,7 @@ class GameManager:
 
 
 class PlayerController:
-    def play(self, player: object, card: Card):
+    def play(self, player: object, card: Cards):
         """Play a card of a player
 
         Args:
@@ -81,7 +81,7 @@ class Screen:
         self.cities: List[Tuple[str, int, int]] = []
         self.roads: Set[Tuple[Tuple[str, int, int], Tuple[str, int, int], str]] = []
 
-        self.connection = oracledb.connect(
+        self.connection = oracledb.connect( 
             user="ETD",
             password="ETD",
             host="localhost",

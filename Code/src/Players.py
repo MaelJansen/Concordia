@@ -41,26 +41,26 @@ class Player:
         """
         card.play_effect()
         index_card = self.hand.index(card)
-        self.discard_card(card, index_card)
+    #     self.discard_card(card, index_card)
         
-    def discard_card(self, card: Card, index_card):
-        """Discard a card
+    # def discard_card(self, card: Card, index_card):
+    #     """Discard a card
         
-        Args:
-        card (Cards): the card that the player have already played
-        index: int
-        """
-        # if card in self.hand:
-        #     self.hand.remove(card)
-        #     self.discard_pile.append(card)
-        # else:
-        #     print("Error: The card is not in the player's hand.")
+    #     Args:
+    #     card (Cards): the card that the player have already played
+    #     index: int
+    #     """
+    #     # if card in self.hand:
+    #     #     self.hand.remove(card)
+    #     #     self.discard_pile.append(card)
+    #     # else:
+    #     #     print("Error: The card is not in the player's hand.")
         
-        if self.hand[index_card] == card:
-            self.hand.remove(index_card)
-            self.discard_pile.append(self.hand[index_card])
-        else:
-            print("Error: the card not match with index")
+    #     if self.hand[index_card] == card:
+    #         self.hand.remove(index_card)
+    #         self.discard_pile.append(self.hand[index_card])
+    #     else:
+    #         print("Error: the card not match with index")
 
 class StoreHouse:
     def __init__(self):
