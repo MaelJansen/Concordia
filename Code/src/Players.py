@@ -1,6 +1,6 @@
-import Pieces
-import Cards
-import Map
+from .Pieces import Piece, Colonist
+from .Cards import Card
+from .Map import Map, City
 
 class Player:
     """
@@ -18,6 +18,7 @@ class Player:
     house : City
     discard_pile : List<Card>
     hand : List<Card>
+    peaceful_end : bool
     Methods
     -------
 
@@ -27,12 +28,26 @@ class Player:
         self.money = 0
         self.color = ()
         self.my_store_house = StoreHouse()
-        self.my_colonist = Pieces.Colonist()
-        self.house = Map.City()
-        self.discard_pile = Cards.Card()
-        self.hand = Cards.Card()
+        self.my_colonist = []
+        self.discard_pile = []
+        self.hand = []
         self.my_houses = []
+        self.peaceful_end = False
+        
+    def play_card(self, card: Card):
+        """
+        Parameters
+        ----------
+        card : Card
+            the card to play
+        """
+        if card in self.hand:
+            card.play_effect()
+            self.hand.remove(card)
+            self.discard_pile.append(card)
+        else:
+            print("The card is not in your hand.")
 
 class StoreHouse:
     def __init__(self):
-        self.my_pieces = Pieces.Piece()
+        self.my_pieces = []
