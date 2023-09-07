@@ -1,7 +1,7 @@
 import copy
 from abc import ABC, abstractmethod
-from .Pieces import Resource, Colonist
-from .Map import City
+from Pieces import Resource, Colonist
+from Map import City
 
 
 class Personality(ABC):

@@ -1,5 +1,5 @@
-from .Map import Map
-from .Personalities import *
+from Map import Map
+from Personalities import *
 import typing
 
 class Card:
@@ -150,7 +150,7 @@ class MarketPlace:
 
     """
     def __init__(self):
-        self.stack = []
+        self.stack = ()
         self.display_area = []
 
 class Numeral:

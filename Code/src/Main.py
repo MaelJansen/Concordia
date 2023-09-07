@@ -5,9 +5,12 @@ import pprint
 from tkinter import ttk
 from PIL import ImageTk, Image
 from screeninfo import get_monitors
-import Players
-import Cards
-import Map
+#import Players
+from Map import City, CityToken, Line, Map
+# import Players
+from Players import Player
+from Cards import Card, MarketPlace
+from Map import Map
 from typing import Type
 import oracledb
 import Pieces
@@ -40,7 +43,12 @@ class GameManager:
 
     def __init__(self):
         self.player_controller = None
-        self.game_map = None
+        self.game_map: Map
+        self.player_list:List[Player] = []
+        self.capital: City
+        self.cities: List[City] = []
+        self.roads: Set[Line] = []
+        self.market_place:MarketPlace = MarketPlace()
         self.player_list = []  
         self.current_player_index = 0  # Index of the current player
         self.connection = oracledb.connect(
@@ -51,29 +59,29 @@ class GameManager:
             sid="IUT12c"
         )
         self.cursor = self.connection.cursor()
+        self.initialization_script()
         
-        self.start_game()
 
     def initialization_script(self):
         self.createInterface()
 
     def createInterface(self):
         root = tk.Tk()
-        concordia_screen = Screen(root)
+        concordia_screen = Screen(root,self)
         root.mainloop()
 
-    def start_game(self):
+    def start_game(self, player_number):
         # Initialize the game, set up the map, create players, etc.
         #self.game_map = Map()  # To be Replaced with actual map initialization
         self.get_resource_setup_data()
-        self.create_players(2)  # Create players here
+        self.create_players(player_number)  # Create players here
         self.setup_players()
 
         # Start the first player's turn
 
     def create_players(self, num_players:int):
         for player_num in range(num_players):
-            self.player_list.append(Players.Player())  # Replace with actual player creation
+            self.player_list.append(Player())  # Replace with actual player creation
 
     def setup_players(self):
         # Use SQL queries to get player setup data here
@@ -181,60 +189,7 @@ class GameManager:
         # End the game, calculate scores, display results, etc.
         pass
    
-class PlayerController:
-    def play(self, player: object, card: Cards.Card):
-        """Play a card of a player
 
-        Args:
-        player (Player) : The player who play
-        card (Card) : The card playing
-        """
-        if card in player.hand:
-            player.hand.remove(card)
-            player.discard_pile.append(card)
-            player.play_card(card)
-
-
-class Screen:
-    """This class create the display of the game (main menu, gameplay...)
-    """
-
-    def __init__(self, root: tk.Tk):
-        """Initialize an instance of the screen class.
-
-        Args:
-        root (tk.Tk): An instance of the main application window.
-        """
-        self.root: tk.Tk = root
-        self.player_number: int = 0
-        self.ai_number: int = 0
-        self.ai_difficulty: str = ""
-        self.game_map: str = ""
-        self.maps: list[str] = []
-        self.map_button: List[tk.Button]
-        self.capital: Tuple[str, int, int]
-        self.cities: List[Tuple[str, int, int]] = []
-        self.roads: Set[Tuple[Tuple[str, int, int], Tuple[str, int, int], str]] = []
-
-        self.create_game()
-        self.connection = oracledb.connect(
-            user="ETD",
-            password="ETD",
-            host="localhost",
-            port=1521,
-            sid="IUT12c"
-        )
-        self.cursor = self.connection.cursor()
-        
-
-    def initialization_script(self):
-        self.createInterface()
-
-    def createInterface(self):
-        root = tk.Tk()
-        concordia_screen = Screen(root, self)
-        root.mainloop()
-        
     def calculate_victory_points(self):
         vps = {} 
 
@@ -332,21 +287,26 @@ class Screen:
                 self.roads.append(Line(self.cities[indice_first_city], self.capital, line[2]))
             else:
                 self.roads.append(Line(self.cities[indice_first_city], self.cities[indice_second_city], line[2]))
-
-
+                
+    def charge_cards(self):
+        sql_query_display_area = f"""SELECT t.*
+                                FROM T_Concordia, TABLE(T_Concordia.concordia_display_area) t"""
+        self.cursor.execute(sql_query_display_area)
+        for display_area in self.cursor:
+            self.market_place.display_area.append([display_area[0], display_area[1], display_area[2], display_area[3]])
 
 class PlayerController:
-    def play(self, player: Players.Player, card: Cards.Card):
+    def play(self, player: object, card: Card):
         """Play a card of a player
 
         Args:
         player (Player) : The player who play
         card (Card) : The card playing
         """
-        player.play_card(self,card)
-    
-class PlayerController:
-    pass
+        if card in player.hand:
+            player.hand.remove(card)
+            player.discard_pile.append(card)
+            player.play_card(card)
 
 class Screen:
     """This class create the display of the game (main menu, gameplay...)
@@ -359,11 +319,11 @@ class Screen:
         """
         self.game_manager = game_manager
         self.root: tk.Tk = root
-        self.player_number: int = 0
         self.ai_number: int = 0
         self.ai_difficulty: str = ""
         self.maps: list[str] = []
         self.map_button: List[tk.Button]
+        self.player_number:int
         self.create_game()
 
     def create_game(self):
@@ -373,7 +333,7 @@ class Screen:
         dimensions: Tuple[int, int] = get_monitors()[0]
         self.root.geometry(f"{dimensions.width}x{dimensions.height}")
 
-        self.player_number = None
+        self.game_manager.player_list = []
         self.ai_number = None
         self.ai_difficulty = None
 
@@ -388,8 +348,8 @@ class Screen:
         self.imperium_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 - 60, width=300, height=120)
         self.italy_button = tk.Button(self.root, text="Italia", command=lambda: self.player_configuration("Italia", 2, 4), font=("Helvetica", 24))
         self.italy_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 + 100, width=300, height=120)
-        self.italy_button = tk.Button(self.root, text="Europe", command=lambda: self.player_configuration("EU", 2, 4), font=("Helvetica", 24))
-        self.italy_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 + 260, width=300, height=120)
+        self.europe_button = tk.Button(self.root, text="Europe", command=lambda: self.player_configuration("EU", 2, 4), font=("Helvetica", 24))
+        self.europe_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 + 260, width=300, height=120)
 
 
     def player_configuration(self, name: str, min_player:int, max_players: int):
@@ -403,6 +363,7 @@ class Screen:
 
         self.imperium_button.configure(state="disabled")
         self.italy_button.configure(state="disabled")
+        self.europe_button.configure(state="disabled")
 
         windows: tk.Toplevel = tk.Toplevel(self.root)
         windows.title(f"{name} configuration")
@@ -443,14 +404,13 @@ class Screen:
             windows.destroy()
             self.imperium_button.configure(state="disabled")
             self.italy_button.configure(state="disabled")
+            self.europe_button.configure(state="disabled")
 
-            self.player_number = int(player_number)
+            max_ia: int = self.game_manager.game_map.max_player - len(self.game_manager.player_list)
 
-            max_ia: int = self.game_manager.game_map.max_player - self.player_number
-
-            if self.player_number == 0:
+            if len(self.game_manager.player_list) == 0:
                 min_ia: int = 2
-            elif self.player_number == 1:
+            elif len(self.game_manager.player_list) == 1:
                 min_ia: int = 1
             else:
                 min_ia: int = 0
@@ -475,9 +435,9 @@ class Screen:
             ai_number_label.pack()
 
             ai_number_box: ttk.Combobox = ttk.Combobox(windows, values=values)
-            if self.player_number > 1:
+            if len(self.game_manager.player_list) > 1:
                 ai_number_box.set("0")
-            elif self.player_number == 1:
+            elif len(self.game_manager.player_list) == 1:
                 ai_number_box.set("1")
             else:
                 ai_number_box.set("2")
@@ -504,6 +464,7 @@ class Screen:
             windows.destroy()
             self.imperium_button.configure(state="disabled")
             self.italy_button.configure(state="disabled")
+            self.europe_button.configure(state="disabled")
 
             windows: tk.Toplevel = tk.Toplevel(self.root)
             windows.title("AI difficulty configuration")
@@ -543,6 +504,7 @@ class Screen:
         windows.destroy()
         self.imperium_button.configure(state="normal")
         self.italy_button.configure(state="normal")
+        self.europe_button.configure(state="normal")
         windows.destroy()
 
     def game_screen(self, ai_difficulty: str, windows: tk.Toplevel):
@@ -555,6 +517,8 @@ class Screen:
         windows.destroy()
         if self.ai_number != 0:
             self.ai_difficulty = ai_difficulty
+        
+        self.game_manager.start_game(self.player_number)
 
         self.root.title("Concordia")
         dimensions: Tuple[int, int] = get_monitors()[0]
@@ -624,8 +588,8 @@ class Screen:
                 )
                 way_list.append(way)
             elif similar_road_number == 1:
-                middle_x = (way.city_list[0].x + way.city_list[1].x) / 2
-                middle_y = (way.city_list[0].y + way.city_list[1].y) / 2 + 30
+                middle_x = (way.city_list[0].x + way.city_list[1].x) / 2 - 40
+                middle_y = (way.city_list[0].y + way.city_list[1].y) / 2 + 35
 
                 canvas.create_line(
                     (way.city_list[0].x * coeff_difference_x) + border_width,
@@ -645,8 +609,8 @@ class Screen:
                 )
                 way_list.append(way)
             elif similar_road_number == 2:
-                middle_x = (way.city_list[0].x + way.city_list[1].x) / 2
-                middle_y = (way.city_list[0].y + way.city_list[1].y) / 2 - 30
+                middle_x = (way.city_list[0].x + way.city_list[1].x) / 2 - 40
+                middle_y = (way.city_list[0].y + way.city_list[1].y) / 2 - 35
 
                 canvas.create_line(
                     (way.city_list[0].x * coeff_difference_x) + border_width,
@@ -665,8 +629,47 @@ class Screen:
                     width=2
                 )
                 way_list.append(way)
+                
+        piece_counts = {}
+        for piece in self.game_manager.player_list[0].my_store_house.my_pieces:
+            if piece in piece_counts:
+                piece_counts[piece] += 1
+            else:
+                piece_counts[piece] = 1
 
-
+        heightCoeff = 0.05
+        width = 0
+        for piece, count in piece_counts.items():
+            canvas.create_text(border_width * 2 + width, dimensions.height * heightCoeff, text=f"{piece}: {count}", font=("Helvetica", 9), anchor="w")
+            heightCoeff += 0.05
+            if(heightCoeff == 0.25):
+                heightCoeff = 0.05
+                width = width + dimensions.width * 0.15
+                
+        self.game_manager.charge_cards()
+                
+        for i in range(0, 7):
+            x1 = 0.33 + ((0.77 / 8) * (i + 1)) - 0.017
+            if(self.game_manager.market_place.display_area[i][0] == 1):
+                x2 = 0.33 + ((0.77 / 8) * (i + 1) - 0.01)
+            else:
+                x2 = 0.33 + ((0.77 / 8) * (i + 1)) - 0.018
+            canvas.create_line(dimensions.width * x1 + border_width, border_width, dimensions.width * x1 + border_width, dimensions.height * 0.25,
+                           fill="black", width=2)
+            
+            canvas.create_text(dimensions.width * (x2 - 0.08), dimensions.height * 0.05, text="Personality : Mercator", font=("Helvetica", 8), anchor="w")
+            canvas.create_text(dimensions.width * (x2 - 0.08), dimensions.height * 0.10, text="God : Minerva", font=("Helvetica", 8), anchor="w")
+            canvas.create_text(dimensions.width * (x2 - 0.08), dimensions.height * 0.15, text="Price : 3 brick", font=("Helvetica", 8), anchor="w")
+            
+            if(self.game_manager.market_place.display_area[i][1] == "N" and self.game_manager.market_place.display_area[i][2] != None):
+                canvas.create_text(dimensions.width * (x2 - 0.08), dimensions.height * 0.20, text="Display area price : " + str(self.game_manager.market_place.display_area[i][3]) + " " + self.game_manager.market_place.display_area[i][2], font=("Helvetica", 9), anchor="w")
+            elif(self.game_manager.market_place.display_area[i][1] == "Y" and self.game_manager.market_place.display_area[i][2] == None):
+                canvas.create_text(dimensions.width * (x2 - 0.08), dimensions.height * 0.20, text="Display area price : 1 good (any)", font=("Helvetica", 8), anchor="w")
+            elif(self.game_manager.market_place.display_area[i][1] == "Y"):
+                canvas.create_text(dimensions.width * (x2 - 0.08), dimensions.height * 0.20, text="Display area price : " + str(self.game_manager.market_place.display_area[i][3]) + " " + self.game_manager.market_place.display_area[i][2] + "\nand 1 good (any)", font=("Helvetica", 9), anchor="w")
+            else:
+                canvas.create_text(dimensions.width * (x2 - 0.08), dimensions.height * 0.20, text="Display area price : Nothing", font=("Helvetica", 8), anchor="w")
+                
 if __name__ == "__main__":
     # Creating a singleton game manager
     game_manager:GameManager = GameManager()    
