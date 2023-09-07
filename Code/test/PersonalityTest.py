@@ -78,6 +78,22 @@ class PersonalityTest(unittest.TestCase):
         self.assertTrue(resource not in player.my_store_house.my_pieces)
         self.assertTrue(brick not in player.my_store_house.my_pieces)
 
+    def test_pay_with_resource_by_name(self):
+        player = Player()
+        city_token: CityToken = CityToken()
+        city: City = City(city_token)
+        personality: Concordia = Concordia(player)
+        brick = Resource(1, 1, "brick", 1, "blue", "brick")
+        city.assigned_city_token.assigned_resource = brick
+        resource: Resource = Resource(1, 1, "food", 1, "green", "food")
+        player.my_store_house.my_pieces.append(resource)
+        player.my_store_house.my_pieces.append(brick)
+        self.assertTrue(resource in player.my_store_house.my_pieces)
+        self.assertTrue(brick in player.my_store_house.my_pieces)
+        personality.pay_with_resource_by_name("food", "brick")
+        self.assertTrue(resource not in player.my_store_house.my_pieces)
+        self.assertTrue(brick not in player.my_store_house.my_pieces)
+
 
 class ArchitectTest(unittest.TestCase):
     def test_architect(self):

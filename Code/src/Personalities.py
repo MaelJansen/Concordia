@@ -61,7 +61,8 @@ class Personality(ABC):
             self.player.my_store_house.my_pieces.remove(resource)
 
     def pay_with_resource_by_name(self, *name_resource):
-        for resource in self.player.my_store_house.my_pieces:
+        resources = self.player.my_store_house.my_pieces.copy()
+        for resource in resources:
             if name_resource.__contains__(resource.name):
                 self.player.my_store_house.my_pieces.remove(resource)
 
