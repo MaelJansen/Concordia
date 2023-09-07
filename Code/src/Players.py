@@ -32,6 +32,14 @@ class Player:
         self.discard_pile = Cards.Card()
         self.hand = Cards.Card()
         self.my_houses = []
+        
+    def play_card(self, card):
+        if card in self.hand:
+            card.play_card()
+            self.hand.remove(card)
+            self.discard_pile.append(card)
+        else:
+            print("The card is not in your hand.")
 
 class StoreHouse:
     def __init__(self):
