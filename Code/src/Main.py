@@ -12,6 +12,9 @@ from typing import Type, List
 import oracledb
 import Map
 import Pieces
+import typing
+import random
+from Map import City
 
 
 class GameManager:
@@ -49,12 +52,11 @@ class GameManager:
         self.connection = oracledb.connect(
             user="ETD",
             password="ETD",
-            host="info-atchoum.iut.bx",
+            host="localhost",
             port=1521,
             sid="IUT12c"
         )
         self.cursor = self.connection.cursor()
-
         self.get_player_setup_data()
 
     def initialization_script(self):
@@ -78,7 +80,7 @@ class GameManager:
         for player_num in range(num_players):
             player_name = f"Player {player_num + 1}"
             # Replace with actual player creation
-            self.player_list.append(Players.Player(player_name))
+            self.player_list.append(Players.Player())
 
     def setup_players(self):
         # Use SQL queries to get player setup data here
@@ -183,11 +185,24 @@ class GameManager:
             res_type: str = city_token_elem[1]
 
             # Creating the city token object
-            city_token: Map.CityToken = Map.CityToken(city_token_elem[0], nb_copies, Pieces.Resource(
+            token: typing.Text = city_token_elem[0]
+            city_token: Map.CityToken = Map.CityToken(token, nb_copies, Pieces.Resource(
                 Pieces.ResourceType.RESOURCE_TYPES[res_type]))
+            # Getting the cities which still have not a token assigned to themselves
+            concerned_cities: typing.List[Map.City] = self.get_cities_without_tokens(
+                token)
+            random.shuffle(concerned_cities)
             # Attributing the city tokens
             for i in range(nb_copies):
-                pass
+                concerned_cities[i].assigned_city_token = city_token
+
+    def get_cities_without_tokens(self, token: typing.Text):
+        cities = []
+        for province in GameManager.game_manager.game_map.my_provinces():
+            province_cities = list(filter(
+                lambda city: city.token == None and city.roman_char == token), province.my_cities)
+            cities += province_cities
+        return cities
 
     def get_city_token_distribution_setup_data(self) -> List[Tuple]:
         """Getting data to set up the city token distribution
@@ -269,10 +284,6 @@ class Screen:
 
         for player in self.player_list:
             total_vps: int = 0
-            player = Type[Player](player)
-
-            if player.peaceful_end:
-                total_vps += 7
 
             cash_money: int = player.money
             goods_value: int = sum(
@@ -332,6 +343,7 @@ class Screen:
                             WHERE t.map_name='{self.game_map.name}'"""
         self.cursor.execute(sql_query_cities)
         for city in self.cursor:
+            print(city)
             temp_city = City(CityToken(), city[0], city[1], city[2])
             self.cities.append(temp_city)
 
@@ -742,4 +754,5 @@ class Screen:
 
 if __name__ == "__main__":
     # Creating a singleton game manager
-    game_manager: GameManager = GameManager()
+    GameManager.game_manager = GameManager()
+    GameManager.game_manager.start_game()

@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import typing
-import Pieces
 
 
 class Map:
@@ -92,7 +91,7 @@ class City(Position):
 
     """
 
-    def __init__(self, my_assigned_city_token):
+    def __init__(self, my_assigned_city_token=None):
         super().__init__()
         self.road_list = ()
         self.assigned_city_token = my_assigned_city_token
@@ -119,7 +118,7 @@ class CityToken:
 
     """
 
-    def __init__(self, roman_char: typing.Text, n_copies: int, assigned_resource: typing.Type[Pieces.Resource]):
+    def __init__(self, roman_char: typing.Text, n_copies: int, assigned_resource: object):
         self.roman_char = roman_char
         self.n_copies = n_copies
         self.assigned_resource = assigned_resource
@@ -148,32 +147,6 @@ class Line(Position):
 
 class Way:
     """
-    A class to represent the way that will be used by the colonist to travel across the map
-
-    ...
-
-    Attributes
-    ----------
-    color : Tuple
-    max_colonist : int
-    n_colonist : int
-    name : string
-
-    Methods
-    -------
-    is_valid_move_for_colonist(self, colonist)
-
-    """
-
-    def __init__(self):
-        self.color = None
-        self.max_colonist = None
-        self.n_colonist = None
-        self.name = None
-
-
-class Way:
-    """
     A class to represent a way or path in the game Concordia.
 
     Attributes
@@ -192,9 +165,11 @@ class Way:
 
     """
 
-    def __init__(self, name):
+    def __init__(self, color, max_colonist, n_colonist, name):
+        self.color = color
+        self.max_colonist = max_colonist
+        self.n_colonist = n_colonist
         self.name = name
-        self.occupant = None
 
     def is_valid_move_for_colonist(self, colonist):
         if self.occupant is not None:
