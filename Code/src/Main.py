@@ -5,9 +5,7 @@ import pprint
 from tkinter import ttk
 from PIL import ImageTk, Image
 from screeninfo import get_monitors
-#import Players
 from Map import City, CityToken, Line, Map
-# import Players
 from Players import Player
 from Cards import Card, MarketPlace
 from Map import Map
@@ -27,18 +25,11 @@ class GameManager:
     player_controller : PlayerManager
     game_map : Map
     player_list : List<Player>
-    player_color : List<Tuple()>
-    capital : Tuple[str, int, int]
-    List : [Tuple[str, int, int]]
-    cities : List[Tuple[str, int, int]]
-    roads : Set[Tuple[Tuple[str, int, int], Tuple[str, int, int], str]]
-    
-
-    Methods
-    -------
-    initialization_script()
-        The method to setup the game
-
+    capital : City
+    cities : List[City]
+    roads : Set[Line]
+    market_place : MarketPlace
+    current_player_index : int
     """
 
     def __init__(self):
@@ -49,8 +40,8 @@ class GameManager:
         self.cities: List[City] = []
         self.roads: Set[Line] = []
         self.market_place:MarketPlace = MarketPlace()
-        self.player_list = []  
         self.current_player_index = 0  # Index of the current player
+
         self.connection = oracledb.connect(
             user="ETD",
             password="ETD",
@@ -66,25 +57,37 @@ class GameManager:
         self.createInterface()
 
     def createInterface(self):
+        """This method creates the interface of the game
+        """
         root = tk.Tk()
         concordia_screen = Screen(root,self)
         root.mainloop()
 
-    def start_game(self, player_number):
+    def start_game(self, player_number:int):
+        """This method starts the game
+
+        Args:
+            player_number (int): number of players
+        """
         # Initialize the game, set up the map, create players, etc.
-        #self.game_map = Map()  # To be Replaced with actual map initialization
         self.get_resource_setup_data()
-        self.create_players(player_number)  # Create players here
+        self.create_players(player_number) 
         self.setup_players()
 
-        # Start the first player's turn
 
     def create_players(self, num_players:int):
+        """
+        This method create the players according to the number of players
+        Args:
+            num_players (int): number of players
+        """
         for player_num in range(num_players):
             self.player_list.append(Player())  # Replace with actual player creation
 
     def setup_players(self):
-        # Use SQL queries to get player setup data here
+        """
+        This method setup the players according to the database
+        """
         player_setup_data = self.get_player_setup_data()
 
         # Assign player setup data to each player
@@ -107,7 +110,9 @@ class GameManager:
             current_player.setup_sestertii(sestertii_data)
 
     def get_player_setup_data(self):
-        # Executing the SQL queries to retrieve the data
+        """
+        This method get the data of the players from the database
+        """
         sql_query_colonists = f"""SELECT spc.setup_p_colon_way,
                             spc.setup_p_colon_n_colonists,
                             spc.setup_p_colon_n_colonists_cap
@@ -161,6 +166,9 @@ class GameManager:
         return all_player_data
     
     def get_resource_setup_data(self):
+        """
+        This method get the data of the resources from the database and create the resource type
+        """
         sql_query_goods = f"""SELECT t.good_name name,
                                 t.good_value value,
                                 good_color color,
@@ -176,10 +184,13 @@ class GameManager:
         Pieces.ResourceType.setup_resource_types(goods_data)
 
     def start_next_player_turn(self):
+        """
+        This method start the turn of the next player
+        """
         # Get the current player
         current_player = self.player_list[self.current_player_index]
 
-        # Start the player's turn (you need to implement this in PlayerController)
+        # Start the player's turn (to be implemented in PlayerController)
         self.player_controller.start_player_turn(current_player)
 
         # Increment the current player index
@@ -191,6 +202,9 @@ class GameManager:
    
 
     def calculate_victory_points(self):
+        """This method calculate the victory points of each player and return a dictionary with
+          the name of the player and his victory points
+        """
         vps = {} 
 
         for player in self.player_list:

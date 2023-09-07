@@ -15,12 +15,10 @@ class Player:
     color : tuple
     my_store_house : StoreHouse
     player_colonist : Colonist
-    house : City
     discard_pile : List<Card>
     hand : List<Card>
-    peaceful_end : bool
-    Methods
-    -------
+    my_houses : List<City>
+    MAX_HOUSES : int
 
     """
     #static
@@ -35,11 +33,11 @@ class Player:
         self.hand = list[Cards.Card]
         self.my_houses = list[Map.City]
 
-    def setup_colonists(self,colonist_data):
+    def setup_colonists(self,colonist_data: list):
         """Setup the player colonists according to the database
 
         Args:
-            colonist_data (_type_): _description_
+            colonist_data (list): data that contains the colonist type and the number of copies for the player setup
         """
         for i in range (len(colonist_data)):
             type = colonist_data[i][0]
@@ -47,7 +45,12 @@ class Player:
             for y in range (n_copies):
                 self.my_store_house.my_pieces.append(Pieces.Colonist(type,self.color))
     
-    def setup_goods(self,goods_data):
+    def setup_goods(self,goods_data : list):
+        """Setup the player goods according to the database
+        Args:
+            goods_data (list): data that contains the goods type and the number of copies for the player setup
+        """
+
         for i in range (len(goods_data)):
             type = goods_data[i][0]
             n_copies = goods_data[i][1]
@@ -82,5 +85,8 @@ class Player:
             print("The card is not in your hand.")
 
 class StoreHouse:
+    """
+    A class to represent the store house of the player
+    """
     def __init__(self):
         self.my_pieces = []
