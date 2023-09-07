@@ -230,33 +230,45 @@ class SenatorTest:
         self.assertNotIn(card2, marketplace.display_area)
 
 
-class SpecialistTest:
+class SpecialistTest(unittest.TestCase):
     def test_specialist(self):
-        specialist: Specialist = Specialist("Mason", "Specialist", null)
+        test_brick = Resource(2, 1, "brick", 1, "blue", "brick")
 
-        player: Player = Player(0, 0, (12, 14, 15))
-        player.add_card(specialist)
+        player: Player = Player()
+        specialist: Specialist = Specialist(player, test_brick)
+        player.hand.append(specialist)
 
-        city: City = City("I", (12, 14, 15))
-        city.add_house(player)
+        city_token: CityToken = CityToken()
+        city_token.assigned_resource = test_brick
+        city: City = City(city_token)
+        player.my_houses.append(city)
 
+        self.assertEqual(len(player.my_store_house.my_pieces), 0)
         specialist.personality_action()
-        self.assertEqual(player.my_store_house[0].type, "brick")
+        self.assertEqual(player.my_store_house.my_pieces[0], test_brick)
 
     def test_specialist2(self):
-        specialist: Specialist = Specialist("Mason", "Specialist", null)
+        test_food = Resource(2, 1, "food", 1, "yellow", "food")
+        test_brick = Resource(2, 1, "brick", 1, "blue", "brick")
 
-        player: Player = Player(0, 0, (12, 14, 15))
-        player.add_card(specialist)
+        player: Player = Player()
+        specialist: Specialist = Specialist(player, test_food)
+        player.hand.append(specialist)
 
-        city: City = City("I", (12, 14, 15))
-        city.add_house(player)
+        city_token: CityToken = CityToken()
+        city_token.assigned_resource = test_brick
+        city: City = City(city_token)
+        player.my_houses.append(city)
 
         specialist.personality_action()
-        self.assertEqual(player.my_store_house[0].type, "brick")
+        self.assertEqual(len(player.my_store_house.my_pieces),0)
 
+        city_token: CityToken = CityToken()
+        city_token.assigned_resource = test_food
+        food_city: City = City(city_token)
+        player.my_houses.append(food_city)
         specialist.personality_action()
-        self.assertEqual(player.my_store_house[1].type, null)
+        self.assertEqual(len(player.my_store_house.my_pieces),1)
 
 
 class TribuneTest:

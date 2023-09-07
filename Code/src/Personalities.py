@@ -420,9 +420,9 @@ class Specialist(Personality):
         self.type = type_spec
 
     def personality_action(self):
-        for house in self.player.house:
+        for house in self.player.my_houses:
             house: City
-            if house.assigned_city_token.ssigned_resource == self.type:
+            if house.assigned_city_token.assigned_resource == self.type:
                 self.player.my_store_house.my_pieces.append(self.type)
         pass
 
