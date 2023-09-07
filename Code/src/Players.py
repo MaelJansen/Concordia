@@ -53,6 +53,7 @@ class Player:
             n_copies = goods_data[i][1]
             for y in range (n_copies):
                 self.my_store_house.my_pieces.append(Pieces.Resource(Pieces.ResourceType.RESOURCE_TYPES[type]))
+        print(self.my_store_house.my_pieces)
 
     def setup_houses(self,houses_data):
         Player.MAX_HOUSES = houses_data[0][0]

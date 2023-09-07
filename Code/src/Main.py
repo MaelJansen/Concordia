@@ -60,7 +60,7 @@ class GameManager:
         )
         self.cursor = self.connection.cursor()
         
-
+        self.initialization_script()
         self.start_game()
 
     def initialization_script(self):
@@ -82,7 +82,7 @@ class GameManager:
 
     def create_players(self, num_players:int):
         for player_num in range(num_players):
-            self.player_list.append(Players.Player())  # Replace with actual player creation
+            self.player_list.append(Player())  # Replace with actual player creation
 
     def setup_players(self):
         # Use SQL queries to get player setup data here
@@ -190,20 +190,7 @@ class GameManager:
         # End the game, calculate scores, display results, etc.
         pass
    
-class PlayerController:
-    def play(self, player: object, card: Cards.Card):
-        """Play a card of a player
 
-        Args:
-        player (Player) : The player who play
-        card (Card) : The card playing
-        """
-        if card in player.hand:
-            player.hand.remove(card)
-            player.discard_pile.append(card)
-            player.play_card(card)
-
-        
     def calculate_victory_points(self):
         vps = {} 
 
@@ -309,6 +296,21 @@ class PlayerController:
         for display_area in self.cursor:
             print(display_area)
             self.market_place.display_area.append([display_area[0], display_area[1], display_area[2], display_area[3]])
+
+class PlayerController:
+    def play(self, player: object, card: Card):
+        """Play a card of a player
+
+        Args:
+        player (Player) : The player who play
+        card (Card) : The card playing
+        """
+        if card in player.hand:
+            player.hand.remove(card)
+            player.discard_pile.append(card)
+            player.play_card(card)
+
+        
 
 
 class Screen:
