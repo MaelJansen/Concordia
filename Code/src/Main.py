@@ -4,15 +4,12 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import ImageTk, Image
 from screeninfo import get_monitors
-<<<<<<< HEAD
 #import Players
 from Map import City, CityToken, Line, Map
-=======
 # import Players
-from .Players import Player
-from .Cards import Card
-from .Map import Map
->>>>>>> main
+from Players import Player
+from Cards import Card
+from Map import Map
 from typing import Type
 import oracledb
 
@@ -46,20 +43,26 @@ class GameManager:
         self.player_controller = None
         self.game_map: Map
         self.player_list = ()
-<<<<<<< HEAD
         self.capital: City
         self.cities: List[City] = []
         self.roads: Set[Line] = []
-        
-=======
+        self.connection = oracledb.connect(
+            user="ETD",
+            password="ETD",
+            host="localhost",
+            port=1521,
+            sid="IUT12c"
+        )
+        self.cursor = self.connection.cursor()
         self.initialization_script()
+        self.cursor.close()
 
     def initialization_script(self):
         self.createInterface()
 
     def createInterface(self):
         root = tk.Tk()
-        concordia_screen = Screen(root)
+        concordia_screen = Screen(root, self)
         root.mainloop()
         
     def calculate_victory_points(self):
@@ -109,68 +112,7 @@ class GameManager:
             player.n_point = total_vps
 
         return vps
-
-
-
-class PlayerController:
-    def play(self, player: Player, card: Card):
-        """Play a card of a player
-
-        Args:
-        player (Player) : The player who play
-        card (Card) : The card playing
-        """
-        player.play_card(self,card)
-
-
-class Screen:
-    """This class create the display of the game (main menu, gameplay...)
-    """
-
-    def __init__(self, root: tk.Tk):
-        """Initialize an instance of the screen class.
-
-        Args:
-        root (tk.Tk): An instance of the main application window.
-        """
-        self.root: tk.Tk = root
-        self.player_number: int = 0
-        self.ai_number: int = 0
-        self.ai_difficulty: str = ""
-        self.game_map: str = ""
-        self.maps: list[str] = []
-        self.map_button: List[tk.Button]
-        self.capital: Tuple[str, int, int]
-        self.cities: List[Tuple[str, int, int]] = []
-        self.roads: Set[Tuple[Tuple[str, int, int], Tuple[str, int, int], str]] = []
-
->>>>>>> main
-        self.connection = oracledb.connect(
-            user="ETD",
-            password="ETD",
-            host="localhost",
-            port=1521,
-            sid="IUT12c"
-        )
-        self.cursor = self.connection.cursor()
-<<<<<<< HEAD
-        self.initialization_script()
-=======
-
-        self.create_game()
-
->>>>>>> main
-        self.cursor.close()
-        
-
-    def initialization_script(self):
-        self.createInterface()
-
-    def createInterface(self):
-        root:tk.Tk = tk.Tk()
-        concordia_screen = Screen(root, self)
-        root.mainloop() 
-
+    
     def charge_map(self):
         """This method uses SQL resquests to get the capital, the cities and the ways of the map that have been choosed by the player to place them in list. The lists
         will be used to display the city, ways... on the map. 
@@ -180,13 +122,8 @@ class Screen:
                             WHERE t.map_name='{self.game_map.name}'"""
         self.cursor.execute(sql_query_capital)
         for row in self.cursor:
-<<<<<<< HEAD
             self.capital = City(CityToken(), row[0], row[1], row[2])
             
-=======
-            self.capital = [row[0], row[1], row[2]]
-
->>>>>>> main
         sql_query_cities = f"""SELECT c.CITY_NAME as city_name,
                             c.CITY_COORDINATES.X as x,
                             c.CITY_COORDINATES.Y as y
@@ -210,7 +147,6 @@ class Screen:
             first_city_capital: bool = False
             second_city_capital: bool = False
             for city in self.cities:
-<<<<<<< HEAD
                 if(city.name == first_city):
                     indice_first_city = index
                 elif(city.name == second_city):
@@ -227,6 +163,18 @@ class Screen:
             else:
                 self.roads.append(Line(self.cities[indice_first_city], self.cities[indice_second_city], line[2]))
 
+
+
+class PlayerController:
+    def play(self, player: Player, card: Card):
+        """Play a card of a player
+
+        Args:
+        player (Player) : The player who play
+        card (Card) : The card playing
+        """
+        player.play_card(self,card)
+    
 class PlayerController:
     pass
 
@@ -247,25 +195,6 @@ class Screen:
         self.maps: list[str] = []
         self.map_button: List[tk.Button]
         self.create_game()
-=======
-                if (city[0] == first_city):
-                    indice_first_city = index
-                elif (city[0] == second_city):
-                    indice_second_city = index
-                elif (self.capital[0] == first_city):
-                    first_city_capital = True
-                elif (self.capital[0] == second_city):
-                    second_city_capital = True
-                index = index + 1
-            if (first_city_capital):
-                self.roads.append([self.capital, self.cities[indice_second_city], line[2]])
-            elif (second_city_capital):
-                self.roads.append([self.cities[indice_first_city], self.capital, line[2]])
-            else:
-                self.roads.append([self.cities[indice_first_city], self.cities[indice_second_city], line[2]])
-
-        self.cursor.close()
->>>>>>> main
 
     def create_game(self):
         """Create the main menu screen, the player is able to choose the map with that screen
@@ -285,25 +214,15 @@ class Screen:
         label: tk.Label = tk.Label(self.root, image=self.photo)
         label.place(x=0, y=0, relwidth=1, relheight=1)
 
-<<<<<<< HEAD
         self.imperium_button = tk.Button(self.root, text="Imperium", command=lambda: self.player_configuration("Imperium", 2, 5), font=("Helvetica", 24))
         self.imperium_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 - 60, width=300, height=120)
         self.italy_button = tk.Button(self.root, text="Italia", command=lambda: self.player_configuration("Italia", 2, 4), font=("Helvetica", 24))
         self.italy_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 + 100, width=300, height=120)
+        self.italy_button = tk.Button(self.root, text="Europe", command=lambda: self.player_configuration("EU", 2, 4), font=("Helvetica", 24))
+        self.italy_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 + 260, width=300, height=120)
 
 
     def player_configuration(self, name: str, min_player:int, max_players: int):
-=======
-        self.imperium_button = tk.Button(self.root, text="Imperium",
-                                         command=lambda: self.player_configuration("Imperium", 5),
-                                         font=("Helvetica", 24))
-        self.imperium_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 - 60, width=300, height=120)
-        self.italy_button = tk.Button(self.root, text="Italia", command=lambda: self.player_configuration("Italia", 4),
-                                      font=("Helvetica", 24))
-        self.italy_button.place(x=dimensions.width // 2 - 150, y=dimensions.height // 2 + 100, width=300, height=120)
-
-    def player_configuration(self, name: str, max_players: int):
->>>>>>> main
         """The popup that permit to the player to chose the number of players (need to get the min player and max player from SQL Request ToDo)
 
         Args:
@@ -332,21 +251,11 @@ class Screen:
         player_number_label: tk.Label = tk.Label(windows, text="Choose the number of players :")
         player_number_label.pack()
 
-<<<<<<< HEAD
         player_number_box:ttk.Combobox = ttk.Combobox(windows, values=[str(i) for i in range(self.game_manager.game_map.max_player + 1)])
         player_number_box.set("0")
         player_number_box.pack(padx=20, pady=10)
 
         bouton:tk.Button = tk.Button(windows, text="Validate", command=lambda: self.ai_configuration(player_number_box.get(), windows))
-=======
-        player_number_box: ttk.Combobox = ttk.Combobox(windows, values=[str(i) for i in range(max_players + 1)])
-        player_number_box.set("0")
-        player_number_box.pack(padx=20, pady=10)
-
-        bouton: tk.Button = tk.Button(windows, text="Validate",
-                                      command=lambda: self.ai_configuration(player_number_box.get(), max_players,
-                                                                            windows))
->>>>>>> main
         bouton.pack(pady=10)
 
         windows.protocol("WM_DELETE_WINDOW", lambda: self.on_screen_close(windows))
@@ -499,23 +408,15 @@ class Screen:
         max_x: int = 0
         max_y: int = 0
 
-<<<<<<< HEAD
         for city in self.game_manager.cities:
             x = city.x
             y = city.y
             max_x = max(max_x, x)  
             max_y = max(max_y, y) 
-=======
-        for city in self.cities:
-            nom, x, y = city
-            max_x = max(max_x, x)
-            max_y = max(max_y, y)
->>>>>>> main
 
         coeff_difference_x: float = (dimensions.width - border_width * 4) / max_x
         coeff_difference_y: float = (dimensions.height * 0.75 - border_width * 4) / max_y
 
-<<<<<<< HEAD
         canvas.create_oval((self.game_manager.capital.x * coeff_difference_x) + border_width - 10, (self.game_manager.capital.y * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) - 10, (self.game_manager.capital.x * coeff_difference_x) + border_width + 10, (self.game_manager.capital.y * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 10, fill="red")
         canvas.create_text((self.game_manager.capital.x * coeff_difference_x) + border_width, (self.game_manager.capital.y * coeff_difference_y) + (border_width + dimensions.height*0.25 + 3) + 15, text=self.game_manager.capital.name, font=("Helvetica", 8))
 
@@ -528,54 +429,19 @@ class Screen:
             canvas.create_oval(x - 10, y - 10, x + 10, y + 10, fill="black")
             canvas.create_text(x, y + 15, text=name, font=("Helvetica", 8))
 
-=======
-        canvas.create_oval((self.capital[1] * coeff_difference_x) + border_width - 10,
-                           (self.capital[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3) - 10,
-                           (self.capital[1] * coeff_difference_x) + border_width + 10,
-                           (self.capital[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3) + 10,
-                           fill="red")
-        canvas.create_text((self.capital[1] * coeff_difference_x) + border_width,
-                           (self.capital[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3) + 15,
-                           text=self.capital[0], font=("Helvetica", 8))
-
-        for city in self.cities:
-            canvas.create_oval((city[1] * coeff_difference_x) + border_width - 10,
-                               (city[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3) - 10,
-                               (city[1] * coeff_difference_x) + border_width + 10,
-                               (city[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3) + 10,
-                               fill="black")
-            canvas.create_text((city[1] * coeff_difference_x) + border_width,
-                               (city[2] * coeff_difference_y) + (border_width + dimensions.height * 0.25 + 3) + 15,
-                               text=city[0], font=("Helvetica", 8))
->>>>>>> main
 
         way_list = []
         for way in self.game_manager.roads:
 
-<<<<<<< HEAD
             if(way.line_way.name == "land"):
                 color:str = "lightgreen"
             elif(way.line_way.name == "sea"):
                 color:str = "blue"
-=======
-            if (transport_mode == "land"):
-                color: str = "lightgreen"
-            elif (transport_mode == "sea"):
-                color: str = "blue"
->>>>>>> main
             else:
                 color: str = "gray"
 
-<<<<<<< HEAD
             similar_roads = filter(lambda past_way: way.city_list[0] == past_way.city_list[0] and way.city_list[1] == past_way.city_list[1], way_list)
             similar_road_number = len(list(similar_roads))
-=======
-            similar_road_number: int = 0
-            for past_way in way_list:
-                past_first_coordinate, past_second_coordinate, past_transport_mode = past_way
-                if (first_coordinate == past_first_coordinate and second_coordinate == past_second_coordinate):
-                    similar_road_number = similar_road_number + 1
->>>>>>> main
 
             if similar_road_number == 0:
                 canvas.create_line(
