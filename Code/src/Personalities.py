@@ -1,66 +1,66 @@
 from abc import ABC, abstractmethod
-from Pieces import Resource, Colonist
-import Players
-from Map import Province, Map
-from Map import City, Line, Position
-from Cards import Card
+from .Pieces import Resource
+from .Map import City
 
 
 class Personality(ABC):
-    def __init__(self, p: Players):
+    def __init__(self, p: object):
         self.name = self.__class__.__name__.replace('_', '')
         self.card_action = None
         self.card_example = None
-        self.player: Players = p
+        self.player = p
+        # self.game = g
 
-    def could_pay_house(self, city: City):
-        resource_city: Resource = city.assigned_city_token.assigned_resource
+    def could_pay_house(self, city: object):
+        resource_city = city.assigned_city_token.assigned_resource
 
         player_pieces = self.player.my_store_house.my_pieces
         a_brick = False
         a_resource = False
         for piece in player_pieces:
-            if piece is Resource:
-                if resource_city.name == "brick" and piece.name == "food":
-                    return True
-                if resource_city.name == piece.name:
-                    a_resource = True
-                if piece.name == "brick":
-                    a_brick = True
+            if resource_city.name == "brick" and piece.name == "food":
+                return True
+            if resource_city.name == piece.name:
+                a_resource = True
+            if piece.name == "brick":
+                a_brick = True
 
         return a_resource and a_brick
 
-    def could_pay(self,*resources):
+    def could_pay(self, *resources):
         for resource in resources:
-            if not self.player.my_store_house.my_pieces.contain(resource):
+            if resource not in self.player.my_store_house.my_pieces:
                 return False
         return True
 
     def pay_house(self, city: City):
         good_city: Resource = city.assigned_city_token.assigned_resource
         player_pieces = self.player.my_store_house.my_pieces
+        payment_pieces = player_pieces.copy()
 
         has_pay_good = False
         has_pay_brick = False
         for piece in player_pieces:
-            if piece is Resource:
-                if good_city.name == "brick" and piece.name == "food":
-                    player_pieces.remove(piece)
+            if good_city.name == "brick" and piece.name == "food":
+                    payment_pieces.remove(piece)
+                    self.player.my_store_house.my_pieces = payment_pieces
                     break
-                if good_city.name == piece.name and has_pay_good == False:
-                    player_pieces.remove(piece)
+            if good_city.name == piece.name and has_pay_good == False:
+                    payment_pieces.remove(piece)
                     has_pay_good = True
-                if piece.name == "brick" and has_pay_brick == False:
-                    player_pieces.remove(piece)
+            if piece.name == "brick" and has_pay_brick == False:
+                    payment_pieces.remove(piece)
                     has_pay_brick = True
             if has_pay_brick and has_pay_good:
                 break
+        if has_pay_brick and has_pay_good:
+            self.player.my_store_house.my_pieces = payment_pieces
 
     def pay_with_resource(self, *resources):
         for resource in resources:
             self.player.my_store_house.my_pieces.remove(resource)
 
-    def pay_with_resource_by_name(self,*name_resource):
+    def pay_with_resource_by_name(self, *name_resource):
         for resource in self.player.my_store_house.my_pieces:
             if name_resource.__contains__(resource.name):
                 self.player.my_store_house.my_pieces.remove(resource)
@@ -88,23 +88,23 @@ class Architect(Personality):
 
     """
 
-    def __init__(self, p: Players):
+    def __init__(self, p: object):
         super().__init__(p)
         self.card_action = ""
 
     def move_colons(self):
         while True:
             # Function who could ask the player to choose several of his colonists
-            selected_colonist: Colonist = self.player.controller.choose_colonists()
+            selected_colonist = self.game.choose_colonists()
             # Function who could ask the player to choose a way
-            selected_line: Line = self.player.controller.choose_way()
+            selected_line = self.game.controller.choose_way()
             selected_way = selected_line.line_way
             if selected_colonist is None:
                 break
             if selected_way is not None:
                 colonist = self.player.my_colonist
                 colonist.remove(selected_colonist)
-                colonist_position: Position = selected_colonist.position
+                colonist_position = selected_colonist.position
                 possible = False
                 for city in selected_line.city_list:
                     if colonist_position is City:
@@ -125,7 +125,7 @@ class Architect(Personality):
 
         # Function who ask the player where we build the house
         while True:
-            selected_city: City = self.player.controller.choose_city()
+            selected_city: City = self.game.choose_city()
             list_house_player = self.player.house
             if not self.could_pay_house(selected_city):
                 break
@@ -151,7 +151,7 @@ class Colonist_(Personality):
 
     """
 
-    def __init__(self, p: Players):
+    def __init__(self, p: object):
         super().__init__(p)
 
     def personality_action(self):
@@ -180,7 +180,7 @@ class Concordia(Personality):
 
     """
 
-    def __init__(self, p: Players):
+    def __init__(self, p: object):
         super().__init__(p)
 
     def personality_action(self):
@@ -203,16 +203,17 @@ class Consul(Personality):
 
     """
 
-    def __init__(self, p: Players):
+    def __init__(self, p: object):
         super().__init__(p)
 
     def personality_action(self):
         # Ask the player to buy a card in market without additional cost
-        card_chose: Card = self.player.buy_in_market(False)
+        card_chose = self.player.buy_in_market(False)
         if card_chose is not None:
             cost_of_card = card_chose.card_cost
             if self.could_pay(cost_of_card):
                 self.pay_with_resource(cost_of_card)
+
 
 class Diplomat(Personality):
     """
@@ -230,16 +231,15 @@ class Diplomat(Personality):
 
     """
 
-    def __init__(self, p: Players):
+    def __init__(self, p: object):
         super().__init__(p)
 
     def personality_action(self):
         # Ask the player to choice another discard's player
-        player_choice: Players = self.player.choice_discard()
+        player_choice = self.player.choice_discard()
         # and play the card on the top of this discard
         discard_player_choice = player_choice.discard_pile
         discard_player_choice[len(discard_player_choice) - 1].my_personality.personality_action(self.player)
-        pass
 
 
 class Mercator(Personality):
@@ -260,7 +260,7 @@ class Mercator(Personality):
 
     was_buy = False
 
-    def __init__(self, p: Players):
+    def __init__(self, p: object):
         super().__init__(p)
 
     def personality_action(self):
@@ -273,9 +273,9 @@ class Mercator(Personality):
             sale = list()
             purchase = list()
             # Ask what the player wants to sell
-            sale = self.player.controller.sell()
+            sale = self.game.sell()
             # Ask what the player wants to sell
-            purchase = self.player.controller.buy()
+            purchase = self.game.buy()
 
             for resource in sale:
                 resource: Resource
@@ -288,7 +288,7 @@ class Mercator(Personality):
                     self.player.money -= resource.price
                     self.player.my_store_house.my_pieces.add(resource)
 
-            player_finish = self.player.controller.finish_deal()
+            player_finish = self.game.finish_deal()
 
 
 class Prefect(Personality):
@@ -307,23 +307,22 @@ class Prefect(Personality):
 
     """
 
-    def __init__(self, p: Players):
+    def __init__(self, p: object):
         super().__init__(p)
 
     def personality_action(self):
         had_magnus = False
         prefectus_magnus = None
         for c in self.player.hand:
-            c: Card
-            if c.my_personality.name == PrefectusMagnus.__name__.replace("_",""):
+            if c.my_personality.name == PrefectusMagnus.__name__.replace("_", ""):
                 had_magnus = True
                 prefectus_magnus = c.my_personality
                 break
-        want_goods = self.player.controller.want_good()
+        want_goods = self.game.want_good()
         good_choice = False
         if want_goods:
             while not good_choice:
-                province: Province = self.player.controller.choose_province()
+                province = self.game.choose_province()
                 good_choice = province.side_resource_bonus
                 if good_choice:
                     self.player.my_store_house.my_pieces.append(province.ressource_bonus)
@@ -332,7 +331,7 @@ class Prefect(Personality):
                         prefectus_magnus.personality_action()
                     province.side_resource_bonus = False
         else:
-            map : Map = self.player.controller.game_map
+            map = self.game.game_map
             for province in map.my_provinces:
                 if not province.side_resource_bonus:
                     self.player.money += 1
@@ -356,13 +355,13 @@ class PrefectusMagnus(Personality):
 
     """
 
-    def __init__(self, p: Players):
+    def __init__(self, p: object):
         super().__init__(p)
 
     def personality_action(self):
-        numbers_next_player = ((self.player.controller.current_player_index + 1)
-                               % len(self.player.controller.player_list))
-        player_next: Players = self.player.controller.player_list[numbers_next_player]
+        numbers_next_player = ((self.game.current_player_index + 1)
+                               % len(self.game.player_list))
+        player_next = self.game.player_list[numbers_next_player]
         self.player.hand.remove(self)
         self.player = player_next
         player_next.hand.append(self)
@@ -385,13 +384,11 @@ class Senator(Personality):
 
     """
 
-    def __init__(self, p: Players):
+    def __init__(self, p: object):
         super().__init__(p)
 
     def personality_action(self):
-        card_choose_1: Card
-        card_choose_2: Card
-        card_choose_1, card_choose_2 = self.player.controller.choose_cards_market()
+        card_choose_1, card_choose_2 = self.game.choose_cards_market()
         if card_choose_1 is not None:
             if self.could_pay(card_choose_1.card_cost):
                 self.pay_with_resource(card_choose_1.card_cost)
@@ -417,7 +414,7 @@ class Specialist(Personality):
 
     """
 
-    def __init__(self, p: Players, type_spec: Resource):
+    def __init__(self, p: object, type_spec: Resource):
         super().__init__(p)
         self.type = type_spec
 
@@ -445,7 +442,7 @@ class Tribune(Personality):
 
     """
 
-    def __init__(self, p: Players):
+    def __init__(self, p: object):
         super().__init__(p)
 
     def personality_action(self):
@@ -456,5 +453,5 @@ class Tribune(Personality):
         money_earned = nb_cards_added - 3
         if money_earned > 0:
             self.player.money += money_earned
-        selected_colonist: Colonist = self.player.controller.choose_colonist()
+        selected_colonist = self.game.choose_colonist()
         self.player.my_colonist.append(selected_colonist)

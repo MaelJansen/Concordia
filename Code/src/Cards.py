@@ -1,7 +1,4 @@
-import Personalities
-import Players
-import Pieces
-import Map
+from .Map import Map
 
 class Card:
     """
@@ -30,7 +27,7 @@ class Card:
         self.sale_cost = sale_cost
         self.sale_cost_diplomat = sale_cost_diplomat
         
-    def play_card(self):
+    def play_effect(self):
         """
         Parameters
         ----------
@@ -75,7 +72,7 @@ class God:
         self.example = None
         self.victory_points = None
 
-    def point_calculation(self, player : Players.Player, map : Map):
+    def point_calculation(self, player : object, map : Map):
         """
         Calculate the player's victory points related to the god
 
