@@ -34,6 +34,12 @@ class Player:
         self.my_houses = []
         
     def play_card(self, card):
+        """
+        Parameters
+        ----------
+        card : Card
+            the card to play
+        """
         if card in self.hand:
             card.play_card()
             self.hand.remove(card)

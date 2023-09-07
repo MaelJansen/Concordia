@@ -31,6 +31,12 @@ class Card:
         self.sale_cost_diplomat = sale_cost_diplomat
         
     def play_card(self):
+        """
+        Parameters
+        ----------
+        player : Player
+            the player who plays the card
+        """
         if self.my_personality:
             self.my_personality.personality_action()
         else:
