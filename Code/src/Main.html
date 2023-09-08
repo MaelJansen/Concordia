@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module Main</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>Main</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Cjules%5Conedrive%5Cdocuments%5Cs5%5Cconcordia_s5c9%5Ccode%5Csrc%5Cmain.py">c:\users\jules\onedrive\documents\s5\concordia_s5c9\code\src\main.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="PIL.Image.html">PIL.Image</a><br>
+<a href="PIL.ImageTk.html">PIL.ImageTk</a><br>
+</td><td width="25%" valign=top><a href="Pieces.html">Pieces</a><br>
+<a href="oracledb.html">oracledb</a><br>
+</td><td width="25%" valign=top><a href="pprint.html">pprint</a><br>
+<a href="tkinter.html">tkinter</a><br>
+</td><td width="25%" valign=top><a href="tkinter.ttk.html">tkinter.ttk</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="Main.html#GameManager">GameManager</a>
+</font></dt><dt><font face="helvetica, arial"><a href="Main.html#PlayerController">PlayerController</a>
+</font></dt><dt><font face="helvetica, arial"><a href="Main.html#Screen">Screen</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="GameManager">class <strong>GameManager</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>A&nbsp;class&nbsp;to&nbsp;control&nbsp;the&nbsp;game&nbsp;<br>
+&nbsp;<br>
+...<br>
+&nbsp;<br>
+Attributes<br>
+----------<br>
+player_controller&nbsp;:&nbsp;PlayerManager<br>
+game_map&nbsp;:&nbsp;Map<br>
+player_list&nbsp;:&nbsp;List&lt;Player&gt;<br>
+capital&nbsp;:&nbsp;City<br>
+cities&nbsp;:&nbsp;List[City]<br>
+roads&nbsp;:&nbsp;Set[Line]<br>
+market_place&nbsp;:&nbsp;MarketPlace<br>
+current_player_index&nbsp;:&nbsp;int<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="GameManager-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="GameManager-calculate_victory_points"><strong>calculate_victory_points</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;calculate&nbsp;the&nbsp;victory&nbsp;points&nbsp;of&nbsp;each&nbsp;player&nbsp;and&nbsp;return&nbsp;a&nbsp;dictionary&nbsp;with<br>
+the&nbsp;name&nbsp;of&nbsp;the&nbsp;player&nbsp;and&nbsp;his&nbsp;victory&nbsp;points</tt></dd></dl>
+
+<dl><dt><a name="GameManager-charge_cards"><strong>charge_cards</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="GameManager-charge_map"><strong>charge_map</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;uses&nbsp;SQL&nbsp;resquests&nbsp;to&nbsp;get&nbsp;the&nbsp;capital,&nbsp;the&nbsp;cities&nbsp;and&nbsp;the&nbsp;ways&nbsp;of&nbsp;the&nbsp;map&nbsp;that&nbsp;have&nbsp;been&nbsp;choosed&nbsp;by&nbsp;the&nbsp;player&nbsp;to&nbsp;place&nbsp;them&nbsp;in&nbsp;list.&nbsp;The&nbsp;lists<br>
+will&nbsp;be&nbsp;used&nbsp;to&nbsp;display&nbsp;the&nbsp;city,&nbsp;ways...&nbsp;on&nbsp;the&nbsp;map.</tt></dd></dl>
+
+<dl><dt><a name="GameManager-createInterface"><strong>createInterface</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;creates&nbsp;the&nbsp;interface&nbsp;of&nbsp;the&nbsp;game</tt></dd></dl>
+
+<dl><dt><a name="GameManager-create_players"><strong>create_players</strong></a>(self, num_players: int)</dt><dd><tt>This&nbsp;method&nbsp;create&nbsp;the&nbsp;players&nbsp;according&nbsp;to&nbsp;the&nbsp;number&nbsp;of&nbsp;players<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;num_players&nbsp;(int):&nbsp;number&nbsp;of&nbsp;players</tt></dd></dl>
+
+<dl><dt><a name="GameManager-end_game"><strong>end_game</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="GameManager-get_player_setup_data"><strong>get_player_setup_data</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;get&nbsp;the&nbsp;data&nbsp;of&nbsp;the&nbsp;players&nbsp;from&nbsp;the&nbsp;database</tt></dd></dl>
+
+<dl><dt><a name="GameManager-get_resource_setup_data"><strong>get_resource_setup_data</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;get&nbsp;the&nbsp;data&nbsp;of&nbsp;the&nbsp;resources&nbsp;from&nbsp;the&nbsp;database&nbsp;and&nbsp;create&nbsp;the&nbsp;resource&nbsp;type</tt></dd></dl>
+
+<dl><dt><a name="GameManager-initialization_script"><strong>initialization_script</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="GameManager-setup_players"><strong>setup_players</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;setup&nbsp;the&nbsp;players&nbsp;according&nbsp;to&nbsp;the&nbsp;database</tt></dd></dl>
+
+<dl><dt><a name="GameManager-start_game"><strong>start_game</strong></a>(self, player_number: int)</dt><dd><tt>This&nbsp;method&nbsp;starts&nbsp;the&nbsp;game<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;player_number&nbsp;(int):&nbsp;number&nbsp;of&nbsp;players</tt></dd></dl>
+
+<dl><dt><a name="GameManager-start_next_player_turn"><strong>start_next_player_turn</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;start&nbsp;the&nbsp;turn&nbsp;of&nbsp;the&nbsp;next&nbsp;player</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="PlayerController">class <strong>PlayerController</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="PlayerController-play"><strong>play</strong></a>(self, player: object, card: Cards.Card)</dt><dd><tt>Play&nbsp;a&nbsp;card&nbsp;of&nbsp;a&nbsp;player<br>
+&nbsp;<br>
+Args:<br>
+player&nbsp;(Player)&nbsp;:&nbsp;The&nbsp;player&nbsp;who&nbsp;play<br>
+card&nbsp;(Card)&nbsp;:&nbsp;The&nbsp;card&nbsp;playing</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Screen">class <strong>Screen</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Screen">Screen</a>(root:&nbsp;tkinter.Tk,&nbsp;game_manager:&nbsp;Main.<a href="#GameManager">GameManager</a>)<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;create&nbsp;the&nbsp;display&nbsp;of&nbsp;the&nbsp;game&nbsp;(main&nbsp;menu,&nbsp;gameplay...)<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Screen-__init__"><strong>__init__</strong></a>(self, root: tkinter.Tk, game_manager: Main.GameManager)</dt><dd><tt>Initialize&nbsp;an&nbsp;instance&nbsp;of&nbsp;the&nbsp;screen&nbsp;class.<br>
+&nbsp;<br>
+Args:<br>
+root&nbsp;(tk.Tk):&nbsp;An&nbsp;instance&nbsp;of&nbsp;the&nbsp;main&nbsp;application&nbsp;window.</tt></dd></dl>
+
+<dl><dt><a name="Screen-ai_configuration"><strong>ai_configuration</strong></a>(self, player_number: str, windows: tkinter.Toplevel)</dt><dd><tt>The&nbsp;popup&nbsp;that&nbsp;permit&nbsp;to&nbsp;the&nbsp;player&nbsp;to&nbsp;chose&nbsp;the&nbsp;number&nbsp;of&nbsp;AI<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;player_number&nbsp;(str):&nbsp;The&nbsp;number&nbsp;of&nbsp;player&nbsp;that&nbsp;have&nbsp;been&nbsp;choosed&nbsp;by&nbsp;the&nbsp;player<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_players&nbsp;(int):&nbsp;the&nbsp;max&nbsp;players&nbsp;(AI+Human)&nbsp;that&nbsp;the&nbsp;player&nbsp;can&nbsp;choose&nbsp;(delete&nbsp;after&nbsp;sql&nbsp;request)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;windows&nbsp;(tk.Toplevel):&nbsp;The&nbsp;precedent&nbsp;pop-up&nbsp;that&nbsp;get&nbsp;instantly&nbsp;closed</tt></dd></dl>
+
+<dl><dt><a name="Screen-ai_difficulty_configuration"><strong>ai_difficulty_configuration</strong></a>(self, ai_number: str, windows: tkinter.Toplevel)</dt><dd><tt>The&nbsp;popup&nbsp;that&nbsp;permit&nbsp;to&nbsp;the&nbsp;player&nbsp;to&nbsp;chose&nbsp;the&nbsp;AI&nbsp;difficulty<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ai_number&nbsp;(str):&nbsp;The&nbsp;number&nbsp;of&nbsp;AI&nbsp;that&nbsp;the&nbsp;player&nbsp;choosed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;windows&nbsp;(tk.Toplevel):&nbsp;The&nbsp;precedent&nbsp;pop-up&nbsp;that&nbsp;get&nbsp;instantly&nbsp;closed</tt></dd></dl>
+
+<dl><dt><a name="Screen-create_game"><strong>create_game</strong></a>(self)</dt><dd><tt>Create&nbsp;the&nbsp;main&nbsp;menu&nbsp;screen,&nbsp;the&nbsp;player&nbsp;is&nbsp;able&nbsp;to&nbsp;choose&nbsp;the&nbsp;map&nbsp;with&nbsp;that&nbsp;screen</tt></dd></dl>
+
+<dl><dt><a name="Screen-game_screen"><strong>game_screen</strong></a>(self, ai_difficulty: str, windows: tkinter.Toplevel)</dt><dd><tt>Create&nbsp;and&nbsp;display&nbsp;the&nbsp;main&nbsp;game&nbsp;screen<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ai_difficulty&nbsp;(str):&nbsp;difficulty&nbsp;of&nbsp;the&nbsp;AI&nbsp;that&nbsp;the&nbsp;player&nbsp;have&nbsp;choosen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;windows&nbsp;(tk.Toplevel):&nbsp;The&nbsp;precedent&nbsp;pop-up&nbsp;that&nbsp;get&nbsp;instantly&nbsp;closed</tt></dd></dl>
+
+<dl><dt><a name="Screen-on_screen_close"><strong>on_screen_close</strong></a>(self, windows: tkinter.Toplevel)</dt><dd><tt>Activate&nbsp;the&nbsp;main&nbsp;menu&nbsp;button&nbsp;if&nbsp;the&nbsp;player&nbsp;close&nbsp;a&nbsp;popup&nbsp;(the&nbsp;button&nbsp;get&nbsp;desactivate&nbsp;if&nbsp;a&nbsp;popup&nbsp;is&nbsp;open)<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;windows&nbsp;(tk.Toplevel):&nbsp;The&nbsp;pop-up&nbsp;that&nbsp;get&nbsp;closed</tt></dd></dl>
+
+<dl><dt><a name="Screen-player_configuration"><strong>player_configuration</strong></a>(self, name: str, min_player: int, max_players: int)</dt><dd><tt>The&nbsp;popup&nbsp;that&nbsp;permit&nbsp;to&nbsp;the&nbsp;player&nbsp;to&nbsp;chose&nbsp;the&nbsp;number&nbsp;of&nbsp;players&nbsp;(need&nbsp;to&nbsp;get&nbsp;the&nbsp;min&nbsp;player&nbsp;and&nbsp;max&nbsp;player&nbsp;from&nbsp;SQL&nbsp;Request&nbsp;ToDo)<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;(str):&nbsp;name&nbsp;of&nbsp;the&nbsp;map<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_players&nbsp;(int):&nbsp;the&nbsp;max&nbsp;players&nbsp;that&nbsp;the&nbsp;player&nbsp;can&nbsp;choose&nbsp;(delete&nbsp;after&nbsp;sql&nbsp;request)</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-atan2"><strong>atan2</strong></a>(y, x, /)</dt><dd><tt>Return&nbsp;the&nbsp;arc&nbsp;tangent&nbsp;(measured&nbsp;in&nbsp;radians)&nbsp;of&nbsp;y/x.<br>
+&nbsp;<br>
+Unlike&nbsp;atan(y/x),&nbsp;the&nbsp;signs&nbsp;of&nbsp;both&nbsp;x&nbsp;and&nbsp;y&nbsp;are&nbsp;considered.</tt></dd></dl>
+ <dl><dt><a name="-degrees"><strong>degrees</strong></a>(x, /)</dt><dd><tt>Convert&nbsp;angle&nbsp;x&nbsp;from&nbsp;radians&nbsp;to&nbsp;degrees.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>Type</strong> = typing.Type<br>
+<strong>__annotations__</strong> = {}</td></tr></table>
+</body></html>
